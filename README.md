@@ -1,4 +1,3 @@
-ld24
-====
+Ludum Dare 24
 
-Ludum Dare 24 game
+http://www.ludumdare.com/compo/
