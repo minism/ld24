@@ -20,7 +20,7 @@ function game.setup()
 
     -- Setup graphics
     game.blindnessStencil = love.graphics.newStencil(function() 
-        love.graphics.circle("fill", game.player.x, game.player.y, game.player.stats.vision)
+        love.graphics.circle("fill", game.player.x, game.player.y, game.player:stat('vision'))
     end)
 
     -- Setup camera to track player
@@ -112,7 +112,7 @@ end
 
 -- Draw blindness circles around a point
 function game:drawBlindness()
-    local x, y, rad = game.player.x, game.player.y, game.player.stats.vision
+    local x, y, rad = game.player.x, game.player.y, game.player:stat('vision')
     color.black(192)
     love.graphics.circle('fill', x, y, rad, rad)
     love.graphics.setBlendMode('multiplicative')
@@ -141,6 +141,7 @@ end
 
 
 function game:keypressed(key, unicode)
+    -- Handle debug keys
     -- Toggle isometric mode
     if key == 'f2' then
         config.iso = not config.iso

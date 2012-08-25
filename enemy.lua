@@ -1,11 +1,10 @@
 Humanoid = Entity:extend()
 
 function Humanoid:init(conf)
-    local conf = conf or {}
-    _.extend(conf, {
+    local conf = extend({
         w = 9,
         h = 16,
-    })
+    }, conf or {})
     Entity.init(self, conf)
 end
 

@@ -11,11 +11,17 @@ function Sprite:init(prop)
     self.timer = time:every(self.speed, function() self:advanceFrame() end)
 end
 
-function Sprite:draw()
+function Sprite:draw(x, y)
     local quad = self.quads[self.frame]
+    local x = x or 0
+    local y = y or 0
     if quad then
-        love.graphics.drawq(self.image, self.quads[self.frame], 0, 0)
+        love.graphics.drawq(self.image, self.quads[self.frame], x, y)
     end
+end
+
+function Sprite:advanceFrame()
+    self.frame = self.frame % #self.quads + 1
 end
 
 

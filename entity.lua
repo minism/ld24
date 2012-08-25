@@ -1,16 +1,12 @@
-Entity = leaf.Object:extend {
-    default = {
+Entity = leaf.Object:extend()
+
+function Entity:init(conf)
+    self.conf = extend({
         x = 0,
         y = 0,
         w = 32,
         h = 32,
-    },
-}
-
-function Entity:init(conf)
-    self.conf = {}
-    _.extend(self.conf, self.default)
-    _.extend(self.conf, conf or {})
+    }, conf or {})
 
     -- Physics
     self.x = self.conf.x

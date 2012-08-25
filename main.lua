@@ -22,6 +22,7 @@ function love.load()
     assets = require 'assets'
     tilehelper = require 'tilehelper'
     iso = require 'iso'
+    keys = require 'keys'
     game = require 'game'
 
     -- Global timer that always runs

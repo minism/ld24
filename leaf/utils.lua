@@ -40,6 +40,18 @@ function leaf.isinstance(obj, class)
     return getmetatable(obj) == class
 end
 
+-- Like underscore extend but doesnt extend in place
+function leaf.extend(...)
+    local result = {}
+    for i, table in ipairs(arg) do
+        for k, v in pairs(table) do
+            result[k] = v
+        end
+    end
+    return result
+end
+
+
 -- Return a list of quads for each frame of an image
 function leaf.build_quads(image, framewidth, frameheight)
     local quads = {}
