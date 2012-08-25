@@ -136,24 +136,41 @@ function game:update(dt)
     -- Update entities
     remove_if(game.entities, function(entity) 
         entity:update(dt)
+
+        -- Check for collisions
+        if entity.hit == "p_attack" then
+            for i, entity2 in ipairs(game.entities) do
+                if entity2.hit == "enemy" then
+                    l, t, r, b = entity2:getCollisionRect()
+                    if rect_contains(l, t, r, b, entity.x, entity.y) then
+                        entity2:getHit(entity)
+                        entity.dead = true
+                    end
+                end
+            end
+        end
+
         return entity.dead == true
     end)
+
 end
 
 
 function game:keypressed(key, unicode)
     -- Handle debug keys
-    -- Toggle isometric mode
-    if key == 'f2' then
-        config.iso = not config.iso
-    end
-    -- Toggle collision 
-    if key == 'f3' then
-        config.collision = not config.collision
-    end
-    -- Toggle blindness
-    if key == 'f4' then
-        config.blind = not config.blind
+    if config.debug then
+        -- Toggle isometric mode
+        if key == 'f2' then
+            config.iso = not config.iso
+        end
+        -- Toggle collision 
+        if key == 'f3' then
+            config.collision = not config.collision
+        end
+        -- Toggle blindness
+        if key == 'f4' then
+            config.blind = not config.blind
+        end
     end
 end
 

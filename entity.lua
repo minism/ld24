@@ -7,10 +7,18 @@ function Entity:init(conf)
         w = 32,
         h = 32,
         speed = 1,
+        bound = 12,
+        hit = "none",
+        damage = 0,
     }, conf or {})
 
     -- Cleanup state
     self.dead = false
+
+    -- Collision data
+    self.hit = self.conf.hit
+    self.damage = self.conf.damage
+    self.bound = self.conf.bound
 
     -- Physics
     self.x = self.conf.x
@@ -22,9 +30,17 @@ end
 
 function Entity:update(dt) end
 function Entity:updateSpriteMode(velx, vely) end
+function Entity:getHit(e) end
 
 function Entity:getCenter()
-    return self.x - self.w / 2, self.y - self.h /2
+    return self.x - self.w / 2, self.y - self.h /2 + 2
+end
+
+
+function Entity:getCollisionRect()
+    local x, y = self:getCenter()
+    local w, h = self.bound, self.bound
+    return x - w * 3 / 4, y - h * 3 / 4, x + w * 1 / 4, y + h * 1 / 4
 end
 
 
@@ -39,10 +55,16 @@ end
 
 
 function Entity:draw()
+    color.white()
     love.graphics.push()
         self:applyTransform()
         self:drawLocal()
     love.graphics.pop()
+    if config.collision then
+        color.debug()
+        local x, y, x2, y2 = self:getCollisionRect()
+        love.graphics.rectangle('line', x, y, x2 - x, y2 - y)
+    end
 end
 
 function Entity:drawLocal()

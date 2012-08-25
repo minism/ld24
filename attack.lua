@@ -1,6 +1,9 @@
 Attack = Entity:extend()
 
 function Attack:init(conf)
+    local conf = extend({
+        hit = "p_attack",
+    }, conf or {})
     Entity.init(self, conf)
     self.sprite = self.conf.sprite
     self.origin_x = self.x
@@ -26,7 +29,9 @@ function Bullet:init(conf)
         },
         w = 4,
         h = 4,
-        speed = 150,
+        bound = 1,
+        speed = 200,
+        damage = 5,
     }, conf or {})
     Attack.init(self, conf)
 end
@@ -49,8 +54,10 @@ function Punch:init(conf)
             frame_h = 8,
             speed = 0.015
         },
-        w = 16,
-        h = 16,
+        w = 4,
+        h = 4,
+        bound = 2,
+        damage = 10,
     }, conf or {})
     Attack.init(self, conf)
 end
@@ -63,13 +70,13 @@ function Punch:update(dt)
 end
 
 function Punch:draw()
-    local x, y, rot, sx, sy = iso.toOrtho(px + self.x, py + self.y)
+    local x, y, rot, sx, sy = iso.toOrtho(self.x + self.velx, self.y + self.vely)
     love.graphics.push()
         love.graphics.translate(x, y)
         love.graphics.rotate(rot)
         love.graphics.translate(-2, 0)
         love.graphics.scale(sx, sy)
-        love.graphics.rotate(vector.angle(self.x, self.y) - math.pi / 4)
+        love.graphics.rotate(vector.angle(self.velx, self.vely) - math.pi / 4)
         self.conf.sprite:draw(0, 0)
     love.graphics.pop()
 end

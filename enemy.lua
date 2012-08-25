@@ -47,8 +47,16 @@ end
 Enemy = Humanoid:extend()
 
 function Enemy:init(conf)
+    local conf = extend({
+        hit = "enemy",
+    }, conf or {})
     Humanoid.init(self, conf)
     self.speed = 10
+end
+
+
+function Enemy:getHit(attack_entity)
+    self.dead = true
 end
 
 function Enemy:update(dt)

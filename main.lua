@@ -11,6 +11,18 @@ for k, v in pairs(leaf) do
 end
 
 
+-- Patch function
+-- Check if rect contains an object or a point
+function rect_contains(left, top, right, bottom, x, y)
+    if  x >= left and
+        x <= right and
+        y >= top and
+        y <= bottom then 
+        return true     
+    end
+    return false
+end
+
 function love.load()
     -- Seed randomness
     math.randomseed(os.time()); math.random()
