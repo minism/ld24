@@ -113,7 +113,7 @@ Guard = Enemy:extend()
 function Guard:init(conf)
     Enemy.init(self, conf)
     self.sprite = MultiSprite {
-        image = assets.gfx.guy,
+        image = assets.gfx.guard,
         frame_w = 16,
         frame_h = 16,
         modes = 8,
@@ -152,7 +152,7 @@ function Scientist:init(conf)
     }, conf or {})
     Enemy.init(self, conf)
     self.sprite = MultiSprite {
-        image = assets.gfx.guy,
+        image = assets.gfx.scientist,
         frame_w = 16,
         frame_h = 16,
         modes = 8,
