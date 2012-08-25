@@ -50,6 +50,10 @@ function game.processSpecialTile(data)
         [62] = function()
             table.insert(game.entities, Guard { x=x, y=y })
         end,
+
+        [61] = function()
+            table.insert(game.entities, Scientist { x=x, y=y })
+        end,
     }
     if handlers[id] then handlers[id]() end
 end

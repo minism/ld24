@@ -76,13 +76,19 @@ end
 
 -- Movement functions
 
-function Entity:move(velx, vely, dt)
+function Entity:move(velx, vely, dt, stopOnWalls)
     velx, vely = vector.normalize(velx, vely)
     self:updateSpriteMode(velx, vely)
     velx, vely = vector.scale(velx, vely, self.speed)
 
     -- Project
     local next_x, next_y = self.x + velx * dt, self.y + vely * dt
-    self.x = next_x
-    self.y = next_y
+    if not stopOnWalls or game.area:floorAtWorld(next_x, next_y) then
+        self.x = next_x
+        self.y = next_y
+    end
+end
+
+function Entity:tryMove(velx, vely, dt)
+    return self:move(velx, vely, dt, true)
 end

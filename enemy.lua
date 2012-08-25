@@ -78,10 +78,45 @@ function Enemy:die()
     self.dead = true
 end
 
-function Enemy:decide()
+function Enemy:update(dt)
+    -- Update ai timer
+    self.ai_timer = self.ai_timer - dt
+    if self.ai_timer < 0 then
+        self.ai_timer = self.speed / 20
+        self:decide()
+    end
+
+    -- Calculate node list to player using astar
+    local vec_px, vec_py, cost = game.area:findPathVector(self.x, self.y)
+    if self.ai_state == 'move_random' then
+        
+    elseif vec_px and vec_py then
+        if self.ai_state == 'move_player' then
+            -- Move towards player
+            self:move(vec_px, vec_py, dt)
+        elseif self.ai_state == 'move_away' then
+            -- Move away from player
+            self:tryMove(-vec_px, -vec_py, dt)
+        end
+    end
+end
+
+Guard = Enemy:extend()
+
+function Guard:init(conf)
+    Enemy.init(self, conf)
+    self.sprite = MultiSprite {
+        image = assets.gfx.guy,
+        frame_w = 16,
+        frame_h = 16,
+        modes = 8,
+    }
+end
+
+function Guard:decide()
     local vec_px, vec_py, cost = game.area:findPathVector(self.x, self.y)
     if cost < 10 then
-        self.ai_state = 'move'
+        self.ai_state = 'move_player'
     end
 
     local fire_range = math.random(4, 7)
@@ -102,27 +137,12 @@ function Enemy:decide()
     end
 end
 
-function Enemy:update(dt)
-    -- Update ai timer
-    self.ai_timer = self.ai_timer - dt
-    if self.ai_timer < 0 then
-        self.ai_timer = self.speed / 20
-        self:decide()
-    end
+Scientist = Enemy:extend()
 
-    -- Calculate node list to player using astar
-    local vec_px, vec_py, cost = game.area:findPathVector(self.x, self.y)
-    if self.ai_state == 'move' then
-        -- Move towards player
-        if vec_px and vec_py then
-            self:move(vec_px, vec_py, dt)
-        end
-    end
-end
-
-Guard = Enemy:extend()
-
-function Guard:init(conf)
+function Scientist:init(conf)
+    local conf = extend({
+        speed = 30,
+    }, conf or {})
     Enemy.init(self, conf)
     self.sprite = MultiSprite {
         image = assets.gfx.guy,
@@ -131,4 +151,14 @@ function Guard:init(conf)
         modes = 8,
     }
 end
+
+function Scientist:decide()
+    local vec_px, vec_py, cost = game.area:findPathVector(self.x, self.y)
+    if cost < 5 then
+        self.ai_state = 'move_away'
+    else
+        self.ai_state = 'move_random'
+    end
+end
+
 
