@@ -1,4 +1,4 @@
-Entity = Object:extend {
+Entity = leaf.Object:extend {
     default = {
         x = 0,
         y = 0,

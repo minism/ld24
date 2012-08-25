@@ -1,5 +1,5 @@
 -- Animated sprite class
-Sprite = Object:extend()
+Sprite = leaf.Object:extend()
 
 DEFAULT_SPEED = 0.1
 

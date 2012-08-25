@@ -46,10 +46,10 @@ function Player:update(dt)
     local next_x, next_y = self.x + velx * dt, self.y + vely * dt
 
     -- Successful move if floor exists
-    if game.area:floorAt(next_x, self.y) then
+    if game.area:floorAtWorld(next_x, self.y) then
         self.x = next_x
     end
-    if game.area:floorAt(self.x, next_y) then
+    if game.area:floorAtWorld(self.x, next_y) then
         self.y = next_y
     end
 end

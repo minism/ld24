@@ -1,4 +1,6 @@
-Area = Object:extend()
+require 'lib.astar.astar'
+
+Area = leaf.Object:extend()
 
 local WORLD_TILESIZE = 32 / math.sqrt(2)
 
@@ -22,13 +24,16 @@ end
 
 
 -- Determins if floor is at a world coord
-function Area:floorAt(world_x, world_y)
+function Area:floorAtWorld(world_x, world_y)
     local tx, ty = math.floor(world_x / WORLD_TILESIZE), math.floor(world_y / WORLD_TILESIZE)
-    local index = tx + (ty - 1) * self.tilelayers.floor.height
-    return self.tilelayers.floor.data[index] > 0
+    return self:floorAt(tx, ty)
 end
 
-
+-- Determines if floor is at a row, col
+function Area:floorAt(row, col)
+    local index = row + (col - 1) * self.tilelayers.floor.height
+    return self.tilelayers.floor.data[index] > 0
+end
 
 -- Process area data and load anything necessary
 function Area:load()
@@ -51,6 +56,8 @@ function Area:load()
         end
     end
 
+    -- Setup pathfinder
+    self.astar = AStar(self)
 end
 
 
@@ -96,4 +103,97 @@ function Area:getLayer(layername)
         end
     end
     return {}
+end
+
+
+
+-- A* Methods
+function Area:getNode(location)
+  -- Here you make sure the requested node is valid (i.e. on the map, not blocked)
+  -- if the location is not valid, return nil, otherwise return a new Node object
+  if self:floorAt(location.x, location.y) then
+    return Node(location, 1, location.y * self.data.height + location.x)
+  end
+  return nil
+end
+
+function Area:locationsAreEqual(a, b)
+  -- Here you check to see if two locations (not nodes) are equivalent
+  -- If you are using a vector for a location you may be able to simply
+  -- return a == b
+  -- however, if your location is represented some other way, you can handle 
+  -- it correctly here without having to modufy the AStar class
+  return a.x == b.x and a.y == b.y
+end
+
+function Area:getAdjacentNodes(curnode, dest)
+  -- Given a node, return a table containing all adjacent nodes
+  -- The code here works for a 2d tile-based game but could be modified
+  -- for other types of node graphs
+  local result = {}
+  local cl = curnode.location
+  local dl = dest
+  
+  local n = false
+  
+  n = self:_handleNode(cl.x + 1, cl.y, curnode, dl.x, dl.y)
+  if n then
+    table.insert(result, n)
+  end
+
+  n = self:_handleNode(cl.x - 1, cl.y, curnode, dl.x, dl.y)
+  if n then
+    table.insert(result, n)
+  end
+
+  n = self:_handleNode(cl.x, cl.y + 1, curnode, dl.x, dl.y)
+  if n then
+    table.insert(result, n)
+  end
+
+  n = self:_handleNode(cl.x, cl.y - 1, curnode, dl.x, dl.y)
+  if n then
+    table.insert(result, n)
+  end
+  
+  n = self:_handleNode(cl.x + 1, cl.y + 1, curnode, dl.x, dl.y)
+  if n then
+    table.insert(result, n)
+  end
+
+  n = self:_handleNode(cl.x - 1, cl.y - 1, curnode, dl.x, dl.y)
+  if n then
+    table.insert(result, n)
+  end
+
+  n = self:_handleNode(cl.x - 1, cl.y + 1, curnode, dl.x, dl.y)
+  if n then
+    table.insert(result, n)
+  end
+
+  n = self:_handleNode(cl.x + 1, cl.y - 1, curnode, dl.x, dl.y)
+  if n then
+    table.insert(result, n)
+  end
+  
+  return result
+end
+
+function Area:_handleNode(x, y, fromnode, destx, desty)
+  -- Fetch a Node for the given location and set its parameters
+  local n = self:getNode(vector.new(x, y))
+
+  if n ~= nil then
+    local dx = math.max(x, destx) - math.min(x, destx)
+    local dy = math.max(y, desty) - math.min(y, desty)
+    local emCost = dx + dy
+    
+    n.mCost = n.mCost + fromnode.mCost
+    n.score = n.mCost + emCost
+    n.parent = fromnode
+    
+    return n
+  end
+  
+  return nil
 end
