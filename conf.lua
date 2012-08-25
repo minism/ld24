@@ -4,7 +4,7 @@ function love.conf(t)
     t.version = "0.8.0"
 	t.author = "joshbothun@gmail.com"
 	t.identity = nil
-	t.console = false
+	t.console = true
 	t.screen.width = 1024
 	t.screen.height = 768
 	t.screen.fullscreen = false
@@ -26,5 +26,5 @@ end
 
 -- Global game config
 config = {
-	
+	debug = true,	
 }

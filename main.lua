@@ -20,6 +20,8 @@ function love.load()
     app = App()
     color = require 'colors'
     assets = require 'assets'
+    tilehelper = require 'tilehelper'
+    iso = require 'iso'
 
     -- Start game
     app:bind()
