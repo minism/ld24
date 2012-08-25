@@ -3,3 +3,10 @@ My entry for Ludum Dare 24
 http://www.ludumdare.com/compo/
 
 
+Running:
+
+    Install LOVE (http://love2d.org)
+    Open this directory in LOVE (drag and drop)
+        OR
+    $ love .
+
