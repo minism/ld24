@@ -23,6 +23,9 @@ function love.load()
     iso = require 'iso'
     game = require 'game'
 
+    -- Global timer that always runs
+    time = Time()
+
     -- Start game
     app:bind()
     app:pushContext(game)

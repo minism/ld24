@@ -77,6 +77,9 @@ end
 
 
 function game:update(dt)
+    -- Update global time manager
+    time:update(dt)
+
     -- Update player
     game.player:update(dt)
 

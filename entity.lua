@@ -25,7 +25,7 @@ function Entity:applyTransform()
     -- love.graphics.translate(self.x + self.h / 2, self.y + self.h / 2)
     love.graphics.translate(self.x, self.y)
     love.graphics.rotate(rot)
-    love.graphics.translate(-self.w / 2, -self.h * 2)
+    love.graphics.translate(-self.w / 2 - 3, -self.h * 2 - 1)
     love.graphics.scale(sx, sy)
 end
 
