@@ -4,7 +4,7 @@ Player = Entity:extend()
 
 function Player:init(...)
     Entity.init(self, {
-        w = 8,
+        w = 9,
         h = 16,
     })
 

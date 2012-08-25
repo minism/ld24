@@ -69,15 +69,15 @@ function Area:drawTiles()
     -- Process tiles onto sprite batch
     for i, layer in ipairs(self.data.layers) do
         -- Dont draw special tiles
-        if layer.name == 'sp' then break end
-
-        for x=1, layer.width do
-            for y=1, layer.height do
-                local index = x + (y - 1) * layer.height
-                local tile_id = layer.data[index]
-                if tile_id and tile_id > 0 then
-                    -- Add tile's quad to spritebatch, transformed to ortho projection
-                    spritebatch:addq(quads[tile_id], iso.toOrtho(tileToWorld(x - 1.5, y - 0.5)))
+        if layer.name ~= 'sp' then
+            for x=1, layer.width do
+                for y=1, layer.height do
+                    local index = x + (y - 1) * layer.height
+                    local tile_id = layer.data[index]
+                    if tile_id and tile_id > 0 then
+                        -- Add tile's quad to spritebatch, transformed to ortho projection
+                        spritebatch:addq(quads[tile_id], iso.toOrtho(tileToWorld(x - 1.5, y - 0.5)))
+                    end
                 end
             end
         end
