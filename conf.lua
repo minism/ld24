@@ -26,5 +26,6 @@ end
 
 -- Global game config
 config = {
-	debug = true,	
+	debug = true,
+	iso = true,
 }

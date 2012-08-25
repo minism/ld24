@@ -8,9 +8,9 @@ local iso = {
 }
 
 
--- Return the world projection of an isometric rect for a quad
+-- Return the orthographic projection of world coordinates
 -- Returns x, y, rot, sx, sy
-function iso.worldQuad(x, y)
+function iso.toOrtho(x, y)
     return x, y, -iso.angle, 1 / iso.scale.x, 1 / iso.scale.y
 end
 

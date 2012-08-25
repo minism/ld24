@@ -16,6 +16,7 @@ end
 function Area:load()
     -- Cache layers
     self.tilelayers.bg = self:getLayer('bg')
+    assert(self.tilelayers.bg.width, "No bg layer")
 end
 
 
@@ -38,9 +39,9 @@ function Area:drawTiles()
                 local tile_id = layer.data[index]
                 if tile_id and tile_id > 0 then
                     -- Add tile's quad to spritebatch, transformed to ortho projection
-                    spritebatch:addq(quads[tile_id], 
-                                     iso.worldQuad(x * WORLD_TILESIZE, 
-                                                   y * WORLD_TILESIZE))
+                    local xpos = (x - 2.5) * WORLD_TILESIZE
+                    local ypos = (y - 1.5) * WORLD_TILESIZE
+                    spritebatch:addq(quads[tile_id], iso.toOrtho(xpos, ypos))
                 end
             end
         end

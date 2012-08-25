@@ -1,6 +1,9 @@
 require 'area'
+require 'player'
 
 local game = Context()
+
+game.entities = {}
 
 
 function game.setup()
@@ -8,11 +11,24 @@ function game.setup()
     assets.load()
     tilehelper.load()
 
-    -- Setup camera
-    game.camera = Camera()
+    -- Setup player
+    game.player = Player()
+    game.addEntity(game.player)
+
+    -- Setup camera to track player
+    game.camera = Camera {
+        track_func = function() 
+            return game.player.x, game.player.y
+        end,
+    }
 
     area1 = Area('test')
     area1:load()
+end
+
+
+function game.addEntity(e)
+    table.insert(game.entities, e)
 end
 
 
@@ -23,9 +39,15 @@ function game.draw()
 
         -- Draw in isometric projection
         love.graphics.push()
-        iso.applyMatrix()
+        if config.iso == true then iso.applyMatrix() end
 
+            -- Draw area
             area1:draw()
+
+            -- Draw entities
+            for i, entity in ipairs(game.entities) do
+                entity:draw()
+            end
 
         love.graphics.pop()
     love.graphics.pop()
@@ -35,6 +57,14 @@ function game.draw()
     console:drawLog()
     if config.debug then
         love.graphics.print(love.timer.getFPS(), love.graphics.getWidth() - 50, 0)
+    end
+end
+
+
+function game:keypressed(key, unicode)
+    -- Toggle isometric mode
+    if key == 'f2' then
+        config.iso = not config.iso
     end
 end
 
