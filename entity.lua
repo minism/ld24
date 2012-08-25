@@ -20,6 +20,8 @@ function Entity:init(conf)
     self.vel = vector.new()
 end
 
+function Entity:update(dt) end
+
 
 
 function Entity:applyTransform()

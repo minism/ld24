@@ -1,5 +1,6 @@
 require 'area'
 require 'player'
+require 'enemy'
 
 local game = {}
 game.entities = {}
@@ -37,16 +38,33 @@ function game.setup()
     game.loadArea('test')
 end
 
+
+function game.processSpecialTile(data)
+    local id, x, y = data.id, data.x, data.y
+    local handlers = {
+        [63] = function()
+            game.player.x = x
+            game.player.y = y
+        end,
+
+        [62] = function()
+            table.insert(game.entities, Guard { x=x, y=y })
+        end,
+    }
+    if handlers[id] then handlers[id]() end
+end
+
+
 function game.loadArea(areaname)
+    -- Dump previous data
+    game.entities = {}
+
     -- Load area data
     game.area = Area(areaname)
     game.area:load()
 
     -- React to any sp tile init data
-    if game.area.sp_init.player then
-        game.player.x = game.area.sp_init.player.x
-        game.player.y = game.area.sp_init.player.y
-    end
+    for i, spdata in ipairs(game.area.sp_init) do game.processSpecialTile(spdata) end
 end
 
 function game.addEntity(e)
@@ -73,6 +91,9 @@ function game:draw()
             for i, entity in ipairs(game.entities) do
                 entity:draw()
             end
+
+            -- Draw player
+            game.player:draw()
 
             -- Draw blindness
             if config.blind then game:drawBlindness() end
@@ -112,6 +133,10 @@ function game:update(dt)
     -- Update player
     game.player:update(dt)
 
+    -- Update entities
+    for i, entity in ipairs(game.entities) do
+        entity:update(dt)
+    end
 end
 
 

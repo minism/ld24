@@ -22,15 +22,23 @@ function tileToWorld(row, col)
     return row * WORLD_TILESIZE, col * WORLD_TILESIZE
 end
 
+-- Given a world coord, return row, col index for a tile
+function worldToTile(x, y)
+    return math.floor(x / WORLD_TILESIZE), math.floor(y / WORLD_TILESIZE)
+end
+
 
 -- Determins if floor is at a world coord
 function Area:floorAtWorld(world_x, world_y)
-    local tx, ty = math.floor(world_x / WORLD_TILESIZE), math.floor(world_y / WORLD_TILESIZE)
+    local tx, ty = worldToTile(world_x, world_y)
     return self:floorAt(tx, ty)
 end
 
 -- Determines if floor is at a row, col
 function Area:floorAt(row, col)
+    if row < 1 or col < 1 or row > self.data.width or col > self.data.height then
+        return false
+    end
     local index = row + (col - 1) * self.tilelayers.floor.height
     return self.tilelayers.floor.data[index] > 0
 end
@@ -43,15 +51,19 @@ function Area:load()
     assert(self.tilelayers.floor.width, "No floor layer")
 
     -- Process special tiles
+    self.sp_init = {}
     local layer = self.tilelayers.sp
     if layer then
         for x=1, layer.width do
             for y=1, layer.height do
                 local index = x + (y - 1) * layer.height
                 local tile_id = layer.data[index]
-                if tile_id == tilehelper.special.player then
-                    self.sp_init.player = vector.new(tileToWorld(x, y))
-                end
+                local wx, wy = tileToWorld(x, y)
+                table.insert(self.sp_init, {
+                    id = tile_id,
+                    x = wx + WORLD_TILESIZE / 2,
+                    y = wy + WORLD_TILESIZE / 2,
+                })
             end
         end
     end
@@ -108,6 +120,22 @@ end
 
 
 -- A* Methods
+
+-- Given x, y in world coordinates, find an appropriate velocity vector
+-- to the player based on A*
+function Area:findVisiblePlayerVector(world_x, world_y)
+    local src = vector.new(worldToTile(world_x, world_y))
+    local dst = vector.new(worldToTile(game.player.x, game.player.y))
+    local path = self.astar:findPath(src, dst)
+    if path then
+        local first_node = path:getNodes()[1]
+        if first_node then
+            return first_node.location.x - src.x, first_node.location.y - src.y
+        end
+    end
+end
+
+
 function Area:getNode(location)
   -- Here you make sure the requested node is valid (i.e. on the map, not blocked)
   -- if the location is not valid, return nil, otherwise return a new Node object

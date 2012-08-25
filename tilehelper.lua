@@ -1,11 +1,6 @@
 local tilehelper = {
     quads = {},
     spritebatch = {},
-
-    -- Special tile types
-    special = {
-        player = 63,
-    },
 }
 
 local MAX_SPRITES = 1000

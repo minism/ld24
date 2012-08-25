@@ -23,16 +23,6 @@ function assets.load()
     --     large = love.graphics.newFont('font/font.ttf', 48),
     --     huge = love.graphics.newFont('font/font.ttf', 72),
     -- }
-
-    -- Load sprites
-    assets.sprites = {
-        guy = MultiSprite {
-            image = assets.gfx.guy,
-            frame_w = 16,
-            frame_h = 16,
-            modes = 8,
-        },
-    }
 end
 
 function assets.loadCallback(progress, path)

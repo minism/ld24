@@ -4,23 +4,20 @@ require 'enemy'
 
 Player = Humanoid:extend()
 
-function Player:init(...)
-    Entity.init(self, {
-        w = 9,
-        h = 16,
-    })
+function Player:init(conf)
+    Humanoid.init(self, conf)
 
     self.stats = {
         speed = 70,
         vision = 150,
     }
 
-    self.sprite = assets.sprites.guy
-end
-
-function Player:drawLocal()
-    self.sprite:draw()
-    Entity.drawLocal(self)
+    self.sprite = MultiSprite {
+        image = assets.gfx.guy,
+        frame_w = 16,
+        frame_h = 16,
+        modes = 8,
+    }
 end
 
 function Player:update(dt)
