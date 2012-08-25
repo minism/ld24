@@ -28,4 +28,5 @@ end
 config = {
 	debug = true,
 	iso = true,
+	scale = 2,
 }

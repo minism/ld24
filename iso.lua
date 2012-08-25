@@ -15,6 +15,14 @@ function iso.toOrtho(x, y)
 end
 
 
+function iso.toIso(x, y)
+    local x, y = vector.rotate(x, y, iso.angle)
+    x = x * iso.scale.x
+    y = y * iso.scale.y
+    return x, y
+end
+
+
 -- Apply isometric projection matrix to stack
 function iso.applyMatrix()
     love.graphics.scale(iso.scale.x, iso.scale.y)

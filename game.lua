@@ -17,7 +17,11 @@ function game.setup()
 
     -- Setup camera to track player
     game.camera = Camera {
-        track_func = function() 
+        scale = config.scale,
+        track_func = function()
+            if config.iso then
+                return iso.toIso(game.player.x, game.player.y)
+            end
             return game.player.x, game.player.y
         end,
     }
@@ -32,7 +36,7 @@ function game.addEntity(e)
 end
 
 
-function game.draw()
+function game:draw()
     -- Draw in camera projection
     love.graphics.push()
     game.camera:applyMatrix()
@@ -52,12 +56,17 @@ function game.draw()
         love.graphics.pop()
     love.graphics.pop()
 
-
-
     console:drawLog()
     if config.debug then
         love.graphics.print(love.timer.getFPS(), love.graphics.getWidth() - 50, 0)
     end
+end
+
+
+function game:update(dt)
+    -- Update player
+    game.player:update(dt)
+
 end
 
 
