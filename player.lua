@@ -11,7 +11,7 @@ function Player:init(...)
 
     self.stats = {
         speed = 70,
-        vision = 120,
+        vision = 150,
     }
 
     self.sprite = assets.sprites.guy
