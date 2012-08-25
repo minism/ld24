@@ -34,6 +34,11 @@ function game.setup()
         end,
     }
 
+    -- Persistent flags
+    game.flags = {
+
+    }
+
     -- Test
     game.loadArea('test')
 end

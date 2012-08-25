@@ -14,6 +14,11 @@ function Area:init(area_name)
 
     -- For sp init data
     self.sp_init = {}
+
+    -- Persistent flags
+    self.flags = {
+    
+  }
 end
 
 
