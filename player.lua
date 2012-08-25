@@ -3,7 +3,10 @@ require 'entity'
 Player = Entity:extend()
 
 function Player:init(...)
-    Entity.init(self, ...)
+    Entity.init(self, {
+        w = 8,
+        h = 16,
+    })
 
     self.stats = {
         speed = 40,
@@ -11,8 +14,10 @@ function Player:init(...)
 end
 
 function Player:drawLocal()
-    color.debug()
-    love.graphics.rectangle('fill', 0, 0, 2, 2)
+    color.white()
+    love.graphics.rectangle('fill', 0, 0, self.w, self.h)
+
+    Entity.drawLocal(self)
 end
 
 function Player:update(dt)

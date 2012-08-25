@@ -4,19 +4,45 @@ local WORLD_TILESIZE = 32 / math.sqrt(2)
 
 -- Define areas with corresponding area file
 function Area:init(area_name)
-    -- Set area data reference
+    -- Parse area map file
     self.data = assets.areas[area_name]()
 
     -- For specific layers
     self.tilelayers = {}
+
+    -- For sp init data
+    self.sp_init = {}
 end
+
+
+-- Given a row, col index for a tile, return world coords
+function tileToWorld(row, col)
+    return row * WORLD_TILESIZE, col * WORLD_TILESIZE
+end
+
 
 
 -- Process area data and load anything necessary
 function Area:load()
-    -- Cache layers
-    self.tilelayers.bg = self:getLayer('bg')
-    assert(self.tilelayers.bg.width, "No bg layer")
+    -- Cache floor and special layers
+    self.tilelayers.floor = self:getLayer('floor')
+    self.tilelayers.sp = self:getLayer('sp')
+    assert(self.tilelayers.floor.width, "No floor layer")
+
+    -- Process special tiles
+    local layer = self.tilelayers.sp
+    if layer then
+        for x=1, layer.width do
+            for y=1, layer.height do
+                local index = x + (y - 1) * layer.height
+                local tile_id = layer.data[index]
+                if tile_id == tilehelper.special.player then
+                    self.sp_init.player = vector.new(tileToWorld(x, y))
+                end
+            end
+        end
+    end
+
 end
 
 
@@ -26,22 +52,24 @@ end
 
 
 function Area:drawTiles()
-    -- Clear last frame
     local spritebatch = tilehelper.spritebatch.main
     local quads = tilehelper.quads.main
+
+    -- Clear spritebatch from last frame
     spritebatch:clear()
 
-    -- Process tiles
-    for name, layer in pairs(self.tilelayers) do
+    -- Process tiles onto sprite batch
+    for i, layer in ipairs(self.data.layers) do
+        -- Dont draw special tiles
+        if layer.name == 'sp' then break end
+
         for x=1, layer.width do
             for y=1, layer.height do
                 local index = x + (y - 1) * layer.height
                 local tile_id = layer.data[index]
                 if tile_id and tile_id > 0 then
                     -- Add tile's quad to spritebatch, transformed to ortho projection
-                    local xpos = (x - 2.5) * WORLD_TILESIZE
-                    local ypos = (y - 1.5) * WORLD_TILESIZE
-                    spritebatch:addq(quads[tile_id], iso.toOrtho(xpos, ypos))
+                    spritebatch:addq(quads[tile_id], iso.toOrtho(tileToWorld(x - 1.5, y - 0.5)))
                 end
             end
         end

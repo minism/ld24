@@ -15,6 +15,9 @@ function game.setup()
     game.player = Player()
     game.addEntity(game.player)
 
+    -- Setup active area
+    game.area = nil
+
     -- Setup camera to track player
     game.camera = Camera {
         scale = config.scale,
@@ -26,10 +29,21 @@ function game.setup()
         end,
     }
 
-    area1 = Area('test')
-    area1:load()
+    -- Test
+    game.loadArea('test')
 end
 
+function game.loadArea(areaname)
+    -- Load area data
+    game.area = Area(areaname)
+    game.area:load()
+
+    -- React to any sp tile init data
+    if game.area.sp_init.player then
+        game.player.x = game.area.sp_init.player.x
+        game.player.y = game.area.sp_init.player.y
+    end
+end
 
 function game.addEntity(e)
     table.insert(game.entities, e)
@@ -46,7 +60,7 @@ function game:draw()
         if config.iso == true then iso.applyMatrix() end
 
             -- Draw area
-            area1:draw()
+            game.area:draw()
 
             -- Draw entities
             for i, entity in ipairs(game.entities) do
@@ -74,6 +88,10 @@ function game:keypressed(key, unicode)
     -- Toggle isometric mode
     if key == 'f2' then
         config.iso = not config.iso
+    end
+    -- Toggle collision 
+    if key == 'f3' then
+        config.collision = not config.collision
     end
 end
 

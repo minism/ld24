@@ -26,6 +26,7 @@ end
 
 -- Global game config
 config = {
+	collision = false,
 	debug = true,
 	iso = true,
 	scale = 2,
