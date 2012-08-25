@@ -3,7 +3,41 @@ Attack = Entity:extend()
 function Attack:init(conf)
     Entity.init(self, conf)
     self.sprite = self.conf.sprite
+    self.origin_x = self.x
+    self.origin_y = self.y
+    self.velx = self.conf.velx
+    self.vely = self.conf.vely
 end
+
+function Attack:drawLocal()
+    self.sprite:draw(0, 0)
+end
+
+
+Bullet = Attack:extend()
+
+function Bullet:init(conf)
+    local conf = extend({
+        sprite = Sprite {
+            image = assets.gfx.bullet,
+            frame_w = 1,
+            frame_h = 1,
+            speed = 0.01
+        },
+        w = 4,
+        h = 4,
+        speed = 150,
+    }, conf or {})
+    Attack.init(self, conf)
+end
+
+function Bullet:update(dt)
+    if vector.length(self.x - self.origin_x, self.y - self.origin_y) > 300 then
+        self.dead = true
+    end
+    self:move(self.velx, self.vely, dt)
+end
+
 
 Punch = Attack:extend()
 
@@ -29,7 +63,6 @@ function Punch:update(dt)
 end
 
 function Punch:draw()
-    local px, py = game.player:getCenter()
     local x, y, rot, sx, sy = iso.toOrtho(px + self.x, py + self.y)
     love.graphics.push()
         love.graphics.translate(x, y)

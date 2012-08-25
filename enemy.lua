@@ -55,21 +55,9 @@ function Enemy:update(dt)
     -- Calculate node list to player using astar
     local velx, vely = game.area:findPathVector(self.x, self.y)
     if velx and vely then
-        self:tryMove(velx, vely, dt)
+        self:move(velx, vely, dt)
     end
 end
-
-function Enemy:tryMove(velx, vely, dt)
-    velx, vely = vector.normalize(velx, vely)
-    self:updateSpriteMode(velx, vely)
-    velx, vely = vector.scale(velx, vely, self.speed)
-
-    -- Project
-    local next_x, next_y = self.x + velx * dt, self.y + vely * dt
-    self.x = next_x
-    self.y = next_y
-end
-
 
 Guard = Enemy:extend()
 

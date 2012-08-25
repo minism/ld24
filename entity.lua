@@ -6,6 +6,7 @@ function Entity:init(conf)
         y = 0,
         w = 32,
         h = 32,
+        speed = 1,
     }, conf or {})
 
     -- Cleanup state
@@ -16,11 +17,11 @@ function Entity:init(conf)
     self.y = self.conf.y
     self.w = self.conf.w
     self.h = self.conf.h
-    self.vel = vector.new()
+    self.speed = self.conf.speed 
 end
 
 function Entity:update(dt) end
-
+function Entity:updateSpriteMode(velx, vely) end
 
 function Entity:getCenter()
     return self.x - self.w / 2, self.y - self.h /2
@@ -45,4 +46,17 @@ function Entity:draw()
 end
 
 function Entity:drawLocal()
+end
+
+-- Movement functions
+
+function Entity:move(velx, vely, dt)
+    velx, vely = vector.normalize(velx, vely)
+    self:updateSpriteMode(velx, vely)
+    velx, vely = vector.scale(velx, vely, self.speed)
+
+    -- Project
+    local next_x, next_y = self.x + velx * dt, self.y + vely * dt
+    self.x = next_x
+    self.y = next_y
 end

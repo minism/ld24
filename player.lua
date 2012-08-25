@@ -24,11 +24,11 @@ function Player:init(conf)
         modes = 8,
     }
 
+    self.weapon = Bullet
+
     -- Player time instance
     self.time = Time()
-
     self.attack_ready = true
-    self.attack_sprite = nil
 end
 
 -- Get a scaled stat
@@ -70,9 +70,12 @@ function Player:attack(x, y)
         self.attack_ready = false
 
         -- Insert attack entity
-        game.addEntity(Punch {
-            x = x,
-            y = y,
+        local px, py = self:getCenter()
+        game.addEntity(self.weapon {
+            x = px,
+            y = py,
+            velx = x,
+            vely = y,
         })
 
         self.time:after(self:getAttackTime(), function()
