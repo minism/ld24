@@ -123,16 +123,20 @@ end
 
 -- Given x, y in world coordinates, find an appropriate velocity vector
 -- to the player based on A*
-function Area:findVisiblePlayerVector(world_x, world_y)
+function Area:findPathVector(world_x, world_y)
     local src = vector.new(worldToTile(world_x, world_y))
     local dst = vector.new(worldToTile(game.player.x, game.player.y))
     local path = self.astar:findPath(src, dst)
     if path then
         local first_node = path:getNodes()[1]
         if first_node then
-            return first_node.location.x - src.x, first_node.location.y - src.y
+            local tile_worldx, tile_worldy = tileToWorld(first_node.location.x, first_node.location.y)
+            tile_worldx = tile_worldx + WORLD_TILESIZE / 2
+            tile_worldy = tile_worldy + WORLD_TILESIZE / 2
+            return tile_worldx - world_x, tile_worldy - world_y
         end
     end
+    return nil
 end
 
 
@@ -161,47 +165,60 @@ function Area:getAdjacentNodes(curnode, dest)
   local result = {}
   local cl = curnode.location
   local dl = dest
-  
-  local n = false
+
+  local n_up, n_left, n_down, n_right = nil, nil, nil, nil
   
   n = self:_handleNode(cl.x + 1, cl.y, curnode, dl.x, dl.y)
   if n then
-    table.insert(result, n)
-  end
-
-  n = self:_handleNode(cl.x - 1, cl.y, curnode, dl.x, dl.y)
-  if n then
+    n_right = n
     table.insert(result, n)
   end
 
   n = self:_handleNode(cl.x, cl.y + 1, curnode, dl.x, dl.y)
   if n then
+    n_down = n
+    table.insert(result, n)
+  end
+
+  n = self:_handleNode(cl.x - 1, cl.y, curnode, dl.x, dl.y)
+  if n then
+    n_left = n
     table.insert(result, n)
   end
 
   n = self:_handleNode(cl.x, cl.y - 1, curnode, dl.x, dl.y)
   if n then
+    n_up = n
     table.insert(result, n)
   end
   
-  n = self:_handleNode(cl.x + 1, cl.y + 1, curnode, dl.x, dl.y)
-  if n then
-    table.insert(result, n)
+  -- Diagonals
+  if n_right and n_down then
+      n = self:_handleNode(cl.x + 1, cl.y + 1, curnode, dl.x, dl.y)
+      if n then
+        table.insert(result, n)
+      end
   end
 
-  n = self:_handleNode(cl.x - 1, cl.y - 1, curnode, dl.x, dl.y)
-  if n then
-    table.insert(result, n)
+  if n_left and n_up then
+      n = self:_handleNode(cl.x - 1, cl.y - 1, curnode, dl.x, dl.y)
+      if n then
+        table.insert(result, n)
+      end
   end
 
-  n = self:_handleNode(cl.x - 1, cl.y + 1, curnode, dl.x, dl.y)
-  if n then
-    table.insert(result, n)
+  if n_left and n_down then
+      n = self:_handleNode(cl.x - 1, cl.y + 1, curnode, dl.x, dl.y)
+      if n then
+        table.insert(result, n)
+      end
   end
 
-  n = self:_handleNode(cl.x + 1, cl.y - 1, curnode, dl.x, dl.y)
-  if n then
-    table.insert(result, n)
+  if n_right and n_up then
+      n = self:_handleNode(cl.x + 1, cl.y - 1, curnode, dl.x, dl.y)
+      if n then
+        table.insert(result, n)
+      end
   end
   
   return result

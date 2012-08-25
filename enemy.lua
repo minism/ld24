@@ -51,18 +51,21 @@ end
 
 function Enemy:update(dt)
     -- Calculate node list to player using astar
-    local velx, vely = game.area:findVisiblePlayerVector(self.x, self.y)
+    local velx, vely = game.area:findPathVector(self.x, self.y)
     if velx and vely then
-        self:move(velx, vely, dt)
+        self:tryMove(velx, vely, dt)
     end
 end
 
-
--- Given a direction vector, move that direction
-function Enemy:move(velx, vely, dt)
-    velx, vely = iso.makeVector(velx, vely, self.speed)
+function Enemy:tryMove(velx, vely, dt)
+    velx, vely = vector.normalize(velx, vely)
+    velx, vely = vector.scale(velx, vely, self.speed)
     self:updateSpriteMode(velx, vely)
-    self.x, self.y = self.x + velx * dt, self.y + vely * dt
+
+    -- Project
+    local next_x, next_y = self.x + velx * dt, self.y + vely * dt
+    self.x = next_x
+    self.y = next_y
 end
 
 
