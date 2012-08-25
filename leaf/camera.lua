@@ -76,6 +76,7 @@ function Camera:applyMatrix(z)
     -- Center on target, offset depth by Z, scale by camera scale
     love.graphics.scale(self.scale, self.scale)
     love.graphics.translate(z * -x, z * -y)
+    love.graphics.translate(0, -ui.height / self.scale)
 end
 
 -- Convert a vector in screen space to world space.

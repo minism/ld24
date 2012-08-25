@@ -113,8 +113,12 @@ function game:draw()
     -- Clear stencil
     love.graphics.setStencil()
 
-    console:drawLog()
+    -- Draw UI
+    ui.draw()
+
+    -- Draw debug stuff
     if config.debug then
+        console:drawLog()
         love.graphics.print(love.timer.getFPS(), love.graphics.getWidth() - 50, 0)
     end
 end

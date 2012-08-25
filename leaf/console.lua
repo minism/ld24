@@ -87,6 +87,7 @@ end
 function Console:drawLog(width, height)
     local width = width or love.graphics.getWidth()
     local height = height or love.graphics.getHeight()
+    height = height - ui.height
     love.graphics.setColor(255, 255, 255)
     love.graphics.setFont(self.font)
     for i, message in self.queue:iter_reverse() do

@@ -53,6 +53,7 @@ function love.load()
     iso = require 'iso'
     keys = require 'keys'
     game = require 'game'
+    ui = require 'ui'
 
     -- Global timer that always runs
     time = Time()
