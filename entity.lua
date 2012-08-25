@@ -8,6 +8,9 @@ function Entity:init(conf)
         h = 32,
     }, conf or {})
 
+    -- Cleanup state
+    self.dead = false
+
     -- Physics
     self.x = self.conf.x
     self.y = self.conf.y
@@ -18,6 +21,10 @@ end
 
 function Entity:update(dt) end
 
+
+function Entity:getCenter()
+    return self.x - self.w / 2, self.y - self.h /2
+end
 
 
 function Entity:applyTransform()

@@ -5,6 +5,8 @@ require 'attack'
 
 Player = Humanoid:extend()
 
+local ATTACK_LENGTH = 4
+
 function Player:init(conf)
     Humanoid.init(self, conf)
 
@@ -52,14 +54,14 @@ function Player:processInput()
     elseif keys.isDown('a_down') then 
         vely = 1
     end
-    velx, vely = vector.normalize(velx, vely)
+    velx, vely = iso.makeVector(velx, vely, ATTACK_LENGTH)
     if vector.length(velx, vely) > 0 then
         self:attack(velx, vely)
     end
 end
 
 function Player:getAttackTime()
-    return self:stat('spatial') * 0.1
+    return self:stat('spatial') / 20
 end
 
 -- Attack on a vector with current weapon
@@ -69,8 +71,8 @@ function Player:attack(x, y)
 
         -- Insert attack entity
         game.addEntity(Punch {
-            x = self.x,
-            y = self.y,
+            x = x,
+            y = y,
         })
 
         self.time:after(self:getAttackTime(), function()

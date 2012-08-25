@@ -31,7 +31,7 @@ require 'leaf.containers'
 require 'leaf.context'
 
 -- Default settings --
-local HISTORY = 2000
+local HISTORY = 10
 local PADDING = 10
 
 

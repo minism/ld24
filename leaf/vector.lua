@@ -76,6 +76,10 @@ function vector.perpendicular(x, y, right)
     end
 end
 
+function vector.angle(x, y)
+    return math.atan2(y, x)
+end
+
 
 -- Namespace exports
 leaf.vector = vector

@@ -9,6 +9,7 @@ function Sprite:init(prop)
     self.quads = build_quads(self.image, prop.frame_w, prop.frame_h)
     self.frame = 1
     self.timer = time:every(self.speed, function() self:advanceFrame() end)
+    self.loops = 0
 end
 
 function Sprite:draw(x, y)
@@ -22,6 +23,9 @@ end
 
 function Sprite:advanceFrame()
     self.frame = self.frame % #self.quads + 1
+    if self.frame == 1 then
+        self.loops = self.loops + 1
+    end
 end
 
 

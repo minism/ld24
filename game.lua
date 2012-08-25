@@ -134,9 +134,10 @@ function game:update(dt)
     game.player:update(dt)
 
     -- Update entities
-    for i, entity in ipairs(game.entities) do
+    remove_if(game.entities, function(entity) 
         entity:update(dt)
-    end
+        return entity.dead == true
+    end)
 end
 
 
