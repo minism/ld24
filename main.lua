@@ -19,11 +19,13 @@ function love.load()
     console = Console()
     app = App()
     color = require 'colors'
+    assets = require 'assets'
 
     -- Start game
     app:bind()
     local game = require 'game'
     app:pushContext(game)
+    game.setup()
 
     console:write("Game initialized")
 end
