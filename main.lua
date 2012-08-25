@@ -10,7 +10,6 @@ for k, v in pairs(leaf) do
     _G[k] = v
 end
 
-
 function love.load()
     -- Seed randomness
     math.randomseed(os.time()); math.random()
@@ -22,10 +21,10 @@ function love.load()
     assets = require 'assets'
     tilehelper = require 'tilehelper'
     iso = require 'iso'
+    game = require 'game'
 
     -- Start game
     app:bind()
-    local game = require 'game'
     app:pushContext(game)
     game.setup()
 

@@ -21,6 +21,14 @@ function tileToWorld(row, col)
 end
 
 
+-- Determins if floor is at a world coord
+function Area:floorAt(world_x, world_y)
+    local tx, ty = math.floor(world_x / WORLD_TILESIZE), math.floor(world_y / WORLD_TILESIZE)
+    local index = tx + (ty - 1) * self.tilelayers.floor.height
+    return self.tilelayers.floor.data[index] > 0
+end
+
+
 
 -- Process area data and load anything necessary
 function Area:load()

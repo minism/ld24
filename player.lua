@@ -9,7 +9,7 @@ function Player:init(...)
     })
 
     self.stats = {
-        speed = 40,
+        speed = 70,
     }
 end
 
@@ -41,9 +41,14 @@ function Player:update(dt)
     velx, vely = vector.scale(velx, vely, self.stats.speed)
     velx, vely = vector.rotate(velx, vely, -iso.angle)
 
-    -- Copy to physics vector
-    self.vel.x, self.vel.y = velx, vely
+    -- Project
+    local next_x, next_y = self.x + velx * dt, self.y + vely * dt
 
-
-    Entity.update(self, dt)
+    -- Successful move if floor exists
+    if game.area:floorAt(next_x, self.y) then
+        self.x = next_x
+    end
+    if game.area:floorAt(self.x, next_y) then
+        self.y = next_y
+    end
 end

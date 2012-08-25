@@ -20,17 +20,6 @@ function Entity:init(conf)
     self.vel = vector.new()
 end
 
-function Entity:update(dt)
-    self:step(dt)
-end
-
--- Step physics
-function Entity:step(dt)
-    self.x = self.x + self.vel.x * dt
-    self.y = self.y + self.vel.y * dt
-end
-
-
 function Entity:applyTransform()
     local x, y, rot, sx, sy = iso.toOrtho(self.x, self.y)
     -- love.graphics.translate(self.x + self.h / 2, self.y + self.h / 2)

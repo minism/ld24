@@ -1,8 +1,7 @@
 require 'area'
 require 'player'
 
-local game = Context()
-
+local game = {}
 game.entities = {}
 
 
@@ -94,6 +93,5 @@ function game:keypressed(key, unicode)
         config.collision = not config.collision
     end
 end
-
 
 return game
