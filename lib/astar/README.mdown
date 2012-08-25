@@ -1,0 +1,46 @@
+# Lua A*
+
+## About
+
+This is a simple implementation of the A* (A Star) pathfinding algorithm for lua. It is intended to be relatively easy to read and learn from.
+
+It is based on the similarly easy to understand Python implementation by John Eriksson.
+ 
+[http://www.pygame.org/project-AStar-195-.html](http://www.pygame.org/project-AStar-195-.html)
+
+## Usage
+
+Add astar.lua and middleclass.lua to your project.
+
+Begin by implementing a map handler for your specific game. The map handler's job is to determine which nodes are valid for a given path and to calculate a heuristic score for each.
+
+You can find an example handler in "examplehandler.lua". Simply implement those methods in a table (most likely in your level or game object) and pass that table to the AStar class.
+    
+    local maphandler = MyMapHandler()
+    local astar = AStar(maphandler)
+
+When you want to calculate a path
+
+    local path = astar:findPath(start, goal) 
+
+"start" and "goal" are locations in your game. In the example handler, they are simple vectors with x, y components. However, they could be anything: hex tiles, states in a game of tic-tac-toe, etc. You simply need to implement the handler methods for your specific game needs.
+
+astar:findPath() will return a Path object with two methods. 
+
+path:getTotalMoveCost() returns the total cost of the path. You could use it to limit enemy movement if the path cost was above a certain threshold.
+
+path:getNodes() returns a table containing each node in the path, from start to goal.
+
+## Example
+
+Run test.lua to see an example using the TiledMapHandler. This is similar to the implementation used in my Reddit Game Jam 05 submission "[Unrequited](http://www.reddit.com/r/RedditGameJam/comments/ez5b6/reddit_game_jam_05_final_submissions_thread/c1c33ds)".
+
+The [source code](https://github.com/GloryFish/RedditGameJam-05) is on GitHub.
+
+## Contributors
+
+[Sandy Maguire](https://github.com/Paamayim) 
+
+## License
+
+See [license.txt](https://github.com/GloryFish/lua-astar/blob/master/license.txt)
