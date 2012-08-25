@@ -15,26 +15,29 @@ function Humanoid:drawLocal()
 end
 
 function Humanoid:updateSpriteMode(velx, vely)
-    if velx > 0 then
-        if vely > 0 then
+    local absx = math.abs(velx)
+    local absy = math.abs(vely)
+    local thresh = 0.2
+    if velx > thresh then
+        if vely > thresh then
             self.sprite:setMode(1)
-        elseif vely < 0 then
+        elseif vely < -thresh then
             self.sprite:setMode(3)
         else
             self.sprite:setMode(2)
         end
-    elseif velx < 0 then
-        if vely < 0 then
+    elseif velx < -thresh then
+        if vely < -thresh then
             self.sprite:setMode(5)
-        elseif vely > 0 then
+        elseif vely > thresh then
             self.sprite:setMode(7)
         else
             self.sprite:setMode(6)
         end
     else
-        if vely < 0 then
+        if vely < -thresh then
             self.sprite:setMode(4)
-        elseif vely > 0 then
+        elseif vely > thresh then
             self.sprite:setMode(8)
         end
     end
@@ -59,8 +62,8 @@ end
 
 function Enemy:tryMove(velx, vely, dt)
     velx, vely = vector.normalize(velx, vely)
-    velx, vely = vector.scale(velx, vely, self.speed)
     self:updateSpriteMode(velx, vely)
+    velx, vely = vector.scale(velx, vely, self.speed)
 
     -- Project
     local next_x, next_y = self.x + velx * dt, self.y + vely * dt
