@@ -1,7 +1,8 @@
 require 'entity'
 require 'sprite'
+require 'enemy'
 
-Player = Entity:extend()
+Player = Humanoid:extend()
 
 function Player:init(...)
     Entity.init(self, {
@@ -22,32 +23,6 @@ function Player:drawLocal()
     Entity.drawLocal(self)
 end
 
-function Player:updateSpriteMode(velx, vely)
-    if velx > 0 then
-        if vely > 0 then
-            self.sprite:setMode(1)
-        elseif vely < 0 then
-            self.sprite:setMode(3)
-        else
-            self.sprite:setMode(2)
-        end
-    elseif velx < 0 then
-        if vely < 0 then
-            self.sprite:setMode(5)
-        elseif vely > 0 then
-            self.sprite:setMode(7)
-        else
-            self.sprite:setMode(6)
-        end
-    else
-        if vely < 0 then
-            self.sprite:setMode(4)
-        elseif vely > 0 then
-            self.sprite:setMode(8)
-        end
-    end
-end
-
 function Player:update(dt)
     -- Calculate normalized velocity in iso space
     local velx, vely = 0, 0
@@ -63,15 +38,8 @@ function Player:update(dt)
         vely = 1
     end
 
-    velx, vely = vector.normalize(velx, vely)
-
-    -- Convert to world
-    velx, vely = vector.scale(velx, vely, self.stats.speed)
-    velx, vely = vector.rotate(velx, vely, -iso.angle)
-    if math.abs(velx) < 0.001 then velx = 0 end
-    if math.abs(vely) < 0.001 then vely = 0 end
-
-    -- Update sprite based on velocity vector
+    -- Calculate screen velocity vector and update sprite
+    velx, vely = iso.makeVector(velx, vely, self.stats.speed)
     self:updateSpriteMode(velx, vely)
 
     -- Project

@@ -22,6 +22,16 @@ function iso.toIso(x, y)
     return x, y
 end
 
+-- Convert a world vector to iso vector with a magnitude
+function iso.makeVector(x, y, mag)
+    x, y = vector.normalize(x, y)
+    x, y = vector.scale(x, y, mag)
+    x, y = vector.rotate(x, y, -iso.angle)
+    if math.abs(x) < 0.001 then x = 0 end
+    if math.abs(y) < 0.001 then y = 0 end
+    return x, y
+end
+
 -- Apply isometric projection matrix to stack
 function iso.applyMatrix()
     love.graphics.scale(iso.scale.x, iso.scale.y)

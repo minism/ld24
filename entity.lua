@@ -20,6 +20,8 @@ function Entity:init(conf)
     self.vel = vector.new()
 end
 
+
+
 function Entity:applyTransform()
     local x, y, rot, sx, sy = iso.toOrtho(self.x, self.y)
     -- love.graphics.translate(self.x + self.h / 2, self.y + self.h / 2)
