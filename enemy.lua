@@ -4,8 +4,13 @@ function Humanoid:init(conf)
     local conf = extend({
         w = 9,
         h = 16,
+        health = 10,
     }, conf or {})
     Entity.init(self, conf)
+
+    self.state = {
+        health = self.conf.health
+    }
 end
 
 function Humanoid:drawLocal()
@@ -56,6 +61,16 @@ end
 
 
 function Enemy:getHit(attack_entity)
+    self.state.health = self.state.health - attack_entity.damage
+    if self.state.health <= 0 then
+        self:die()
+    else
+        self.overlay = {196, 128, 128}
+        time:after(0.1, function() self.overlay = nil end)
+    end
+end
+
+function Enemy:die()
     self.dead = true
 end
 

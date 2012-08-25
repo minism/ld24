@@ -13,7 +13,7 @@ function Attack:init(conf)
 end
 
 function Attack:drawLocal()
-    self.sprite:draw(0, 0)
+    self.sprite:draw(2, 2)
 end
 
 
@@ -23,14 +23,14 @@ function Bullet:init(conf)
     local conf = extend({
         sprite = Sprite {
             image = assets.gfx.bullet,
-            frame_w = 1,
-            frame_h = 1,
+            frame_w = 2,
+            frame_h = 2,
             speed = 0.01
         },
         w = 4,
         h = 4,
         bound = 1,
-        speed = 200,
+        speed = 150,
         damage = 5,
     }, conf or {})
     Attack.init(self, conf)
@@ -41,6 +41,10 @@ function Bullet:update(dt)
         self.dead = true
     end
     self:move(self.velx, self.vely, dt)
+    -- Die on walls
+    if not game.area:floorAtWorld(self.x, self.y) then
+        self.dead = true
+    end
 end
 
 

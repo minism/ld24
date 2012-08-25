@@ -55,7 +55,11 @@ end
 
 
 function Entity:draw()
-    color.white()
+    if self.overlay then
+        love.graphics.setColor(self.overlay)
+    else
+        color.white()
+    end
     love.graphics.push()
         self:applyTransform()
         self:drawLocal()

@@ -138,7 +138,7 @@ function game:update(dt)
         entity:update(dt)
 
         -- Check for collisions
-        if entity.hit == "p_attack" then
+        if entity.hit == "p_attack" and not entity.dead then
             for i, entity2 in ipairs(game.entities) do
                 if entity2.hit == "enemy" then
                     l, t, r, b = entity2:getCollisionRect()
