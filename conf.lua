@@ -28,6 +28,7 @@ end
 config = {
 	collision = false,
 	debug = true,
+	blind = true,
 	iso = true,
 	scale = 2,
 }

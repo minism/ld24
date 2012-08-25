@@ -17,6 +17,11 @@ function game.setup()
     -- Setup active area
     game.area = nil
 
+    -- Setup graphics
+    game.blindnessStencil = love.graphics.newStencil(function() 
+        love.graphics.circle("fill", game.player.x, game.player.y, game.player.stats.vision)
+    end)
+
     -- Setup camera to track player
     game.camera = Camera {
         scale = config.scale,
@@ -58,6 +63,9 @@ function game:draw()
         love.graphics.push()
         if config.iso == true then iso.applyMatrix() end
 
+            -- Draw blindness
+            if config.blind then love.graphics.setStencil(game.blindnessStencil) end
+
             -- Draw area
             game.area:draw()
 
@@ -66,13 +74,34 @@ function game:draw()
                 entity:draw()
             end
 
+            -- Draw blindness
+            if config.blind then game:drawBlindness() end
+
         love.graphics.pop()
     love.graphics.pop()
+
+    -- Clear stencil
+    love.graphics.setStencil()
 
     console:drawLog()
     if config.debug then
         love.graphics.print(love.timer.getFPS(), love.graphics.getWidth() - 50, 0)
     end
+end
+
+-- Draw blindness circles around a point
+function game:drawBlindness()
+    local x, y, rad = game.player.x, game.player.y, game.player.stats.vision
+    color.black(192)
+    love.graphics.circle('fill', x, y, rad, rad)
+    love.graphics.setBlendMode('multiplicative')
+    color.white(150)
+    for i=1,2 do
+        love.graphics.circle('fill', x, y, rad * i / 3)
+        love.graphics.circle('fill', x, y, rad * i / 3)
+    end
+    love.graphics.setBlendMode('alpha')
+    color.white()
 end
 
 
@@ -94,6 +123,10 @@ function game:keypressed(key, unicode)
     -- Toggle collision 
     if key == 'f3' then
         config.collision = not config.collision
+    end
+    -- Toggle blindness
+    if key == 'f4' then
+        config.blind = not config.blind
     end
 end
 
