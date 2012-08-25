@@ -22,7 +22,6 @@ function iso.toIso(x, y)
     return x, y
 end
 
-
 -- Apply isometric projection matrix to stack
 function iso.applyMatrix()
     love.graphics.scale(iso.scale.x, iso.scale.y)

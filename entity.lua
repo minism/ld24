@@ -13,8 +13,7 @@ function Entity:init(conf)
     -- Physics
     self.x = self.conf.x
     self.y = self.conf.y
-    self.velx = 0
-    self.vely = 0
+    self.vel = vector.new()
 end
 
 function Entity:update(dt)
@@ -23,8 +22,8 @@ end
 
 -- Step physics
 function Entity:step(dt)
-    self.x = self.x + self.velx * dt
-    self.y = self.y + self.vely * dt
+    self.x = self.x + self.vel.x * dt
+    self.y = self.y + self.vel.y * dt
 end
 
 

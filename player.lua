@@ -6,7 +6,7 @@ function Player:init(...)
     Entity.init(self, ...)
 
     self.stats = {
-        speed = 20,
+        speed = 40,
     }
 end
 
@@ -16,21 +16,28 @@ function Player:drawLocal()
 end
 
 function Player:update(dt)
-    if love.keyboard.isDown('a') then     
-        self.velx = -self.stats.speed
+    -- Calculate normalized velocity in iso space
+    local velx, vely = 0, 0
+    if love.keyboard.isDown('a') then
+        velx = -1
     elseif love.keyboard.isDown('d') then 
-        self.velx = self.stats.speed
-    else
-        self.velx = 0
+        velx = 1
     end
 
     if love.keyboard.isDown('w') then 
-        self.vely = -self.stats.speed
+        vely = -1
     elseif love.keyboard.isDown('s') then 
-        self.vely = self.stats.speed
-    else
-        self.vely = 0
+        vely = 1
     end
+
+    velx, vely = vector.normalize(velx, vely)
+
+    -- Convert to world
+    velx, vely = vector.scale(velx, vely, self.stats.speed)
+    velx, vely = vector.rotate(velx, vely, -iso.angle)
+
+    -- Copy to physics vector
+    self.vel.x, self.vel.y = velx, vely
 
 
     Entity.update(self, dt)
