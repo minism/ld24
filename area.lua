@@ -123,7 +123,7 @@ end
 
 -- Given x, y in world coordinates, find an appropriate velocity vector
 -- to the player based on A*
-function Area:findPathVector(world_x, world_y)
+function Area:findPathVector(world_x, world_y, cost)
     local src = vector.new(worldToTile(world_x, world_y))
     local dst = vector.new(worldToTile(game.player.x, game.player.y))
     local path = self.astar:findPath(src, dst)
@@ -133,7 +133,7 @@ function Area:findPathVector(world_x, world_y)
             local tile_worldx, tile_worldy = tileToWorld(first_node.location.x, first_node.location.y)
             tile_worldx = tile_worldx + WORLD_TILESIZE / 2
             tile_worldy = tile_worldy + WORLD_TILESIZE / 2
-            return tile_worldx - world_x, tile_worldy - world_y
+            return tile_worldx - world_x, tile_worldy - world_y, path:getTotalMoveCost()
         end
     end
     return nil

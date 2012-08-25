@@ -53,10 +53,14 @@ Enemy = Humanoid:extend()
 
 function Enemy:init(conf)
     local conf = extend({
+        speed = 20,
         hit = "enemy",
     }, conf or {})
     Humanoid.init(self, conf)
-    self.speed = 10
+
+    -- Setup AI 
+    self.ai_state = 'idle'
+    self.ai_timer = 0
 end
 
 
@@ -74,11 +78,45 @@ function Enemy:die()
     self.dead = true
 end
 
+function Enemy:decide()
+    local vec_px, vec_py, cost = game.area:findPathVector(self.x, self.y)
+    if cost < 10 then
+        self.ai_state = 'move'
+    end
+
+    local fire_range = math.random(4, 7)
+    if cost <= fire_range then
+        self.ai_state = 'fire'
+        self:updateSpriteMode(vec_px, vec_py)
+        -- Calculate vector to player, offset  by random amount
+        local miss_amount = 0.5
+        local offset = math.random() * miss_amount - miss_amount / 2 - 0.1
+        local fire_x, fire_y = vector.rotate(game.player.x - self.x, game.player.y - self.y, offset)
+        game.addEntity(Bullet {
+            x = self.x,
+            y = self.y,
+            velx = fire_x,
+            vely = fire_y,
+            hit = "e_attack",
+        })
+    end
+end
+
 function Enemy:update(dt)
+    -- Update ai timer
+    self.ai_timer = self.ai_timer - dt
+    if self.ai_timer < 0 then
+        self.ai_timer = self.speed / 20
+        self:decide()
+    end
+
     -- Calculate node list to player using astar
-    local velx, vely = game.area:findPathVector(self.x, self.y)
-    if velx and vely then
-        self:move(velx, vely, dt)
+    local vec_px, vec_py, cost = game.area:findPathVector(self.x, self.y)
+    if self.ai_state == 'move' then
+        -- Move towards player
+        if vec_px and vec_py then
+            self:move(vec_px, vec_py, dt)
+        end
     end
 end
 

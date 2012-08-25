@@ -76,6 +76,7 @@ function Player:attack(x, y)
             y = py,
             velx = x,
             vely = y,
+            speed = 200,
         })
 
         self.time:after(self:getAttackTime(), function()
