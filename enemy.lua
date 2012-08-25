@@ -22,6 +22,11 @@ function Humanoid:updateSpriteMode(velx, vely)
     local absx = math.abs(velx)
     local absy = math.abs(vely)
     local thresh = 0.2
+    if absx < thresh and absy < thresh then
+        self.sprite:pause()
+    else
+        self.sprite:resume()
+    end
     if velx > thresh then
         if vely > thresh then
             self.sprite:setMode(1)
@@ -89,7 +94,7 @@ function Enemy:update(dt)
     -- Calculate node list to player using astar
     local vec_px, vec_py, cost = game.area:findPathVector(self.x, self.y)
     if self.ai_state == 'move_random' then
-        
+        self:move(0, 0, dt)
     elseif vec_px and vec_py then
         if self.ai_state == 'move_player' then
             -- Move towards player
@@ -98,6 +103,8 @@ function Enemy:update(dt)
             -- Move away from player
             self:tryMove(-vec_px, -vec_py, dt)
         end
+    else
+        self:move(0, 0, dt)
     end
 end
 

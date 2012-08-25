@@ -29,6 +29,14 @@ function Sprite:advanceFrame()
 end
 
 
+function Sprite:pause()
+    self.timer:pause()
+end
+
+function Sprite:resume()
+    self.timer:resume()
+end
+
 MultiSprite = Sprite:extend()
 
 -- Sprite with modes that animate on columns

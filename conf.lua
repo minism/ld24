@@ -30,5 +30,5 @@ config = {
 	debug = true,
 	blind = false,
 	iso = true,
-	scale = 2,
+	scale = 3,
 }
