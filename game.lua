@@ -415,7 +415,7 @@ function game.useChamber()
             app:pushContext(chamber_win)
         else
             -- TODO: Error sound
-            game.showWindow("ERROR: THIS INCUBATION CHAMBER REQUIRES 10 DNA MODULES TO USE")
+            game.showWindow("ERROR: THIS INCUBATION CHAMBER REQUIRES 10 DNA MODULES TO USE.")
         end
     end
 
@@ -423,7 +423,8 @@ function game.useChamber()
     -- Show on first usage in game
     if game.flags.first_chamber then
         game.flags.first_chamber = false
-        game.showWindow("Hyperincubator explanation...")
+        game.showWindow("(USING A HYPERINCUBATOR WILL STORE YOUR DNA.  IF YOUR BODY IS LOST, YOU CAN BE RECALLED HERE.)")
+        game.showWindow("THIS IS A HYPERINCUBATION POD, THE MAGNUM OPUS OF HumanTECH.  \n\nTHIS ULTRA ADVANCED MACHINE CAN MAKE A COPY OF YOUR DNA, PRODUCE OFFSPRING AND RAPIDLY ACCELERATE THEIR GROWTH IN A MATTER OF NANOSECONDS.  \n\nIT IS KNOWN, HOWEVER, TO AMPLIFY NATURAL GENETIC MUTATIONS.  ALSO, YOUR OLD BODY WILL BE DISCARDED.")
     end
 end
 

@@ -142,12 +142,12 @@ function ChamberWindow:drawContent()
 
     if self.choosing then
         -- Draw selection
-        love.graphics.printf("Do stuff", self.margin + padding, self.margin + padding, sw - self.margin * 2 - padding * 2)
+        love.graphics.printf("WELCOME TO HYPERINCUBATOR v1.0.  SELECT A DURATION", self.margin + padding, self.margin + padding, sw - self.margin * 2 - padding * 2)
         self.slider:draw(left, top + textarea, right - left)
-        love.graphics.printf("You will incubate for " .. self.choice .. " nanoseconds", left, top + textarea * 3, right - left)
+        love.graphics.printf("YOUR CLONES WILL INCUBATE FOR " .. self.choice .. " nanoseconds", left, top + textarea * 3, right - left)
 
-        self.btn.ok:draw(left, top + textarea * 4, 120)
-        self.btn.cancel:draw(left + 150, top + textarea * 4, 120)
+        self.btn.ok:draw(left, top + textarea * 4, 150)
+        self.btn.cancel:draw(left + 200, top + textarea * 4, 150)
     elseif self.incubate_timer < INCUBATE_TIME then
         local text = "Incubating"
         for i=1,self.incubate_timer * 10 do
@@ -155,7 +155,7 @@ function ChamberWindow:drawContent()
         end
         love.graphics.printf(text, left, top, right - left)
     else
-        love.graphics.printf("Select a new body", left, top, right - left)
+        love.graphics.printf("SELECT A BODY", left, top, right - left)
 
         local box_width = 220
         local box_height = box_width * 1.5
