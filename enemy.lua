@@ -89,6 +89,9 @@ function Enemy:decide()
 end
 
 function Enemy:update(dt)
+    -- HACK!
+    local last_x, last_y = self.x, self.y
+
     -- Update ai timer
     self.ai_timer = self.ai_timer - dt
     if self.ai_timer < 0 then
@@ -97,8 +100,8 @@ function Enemy:update(dt)
     end
 
     -- Calculate node list to player using astar
-    if self.ai_state == 'move_random' then
-        self:move(0, 0, dt)
+    if self.ai_state == 'move_random' and self.next_random then
+        self:move(self.next_random[1], self.next_random[2], dt)
     elseif self.vec_px and self.vec_py then
         if self.ai_state == 'move_player' then
             -- Move towards player
@@ -109,6 +112,11 @@ function Enemy:update(dt)
         end
     else
         self:move(0, 0, dt)
+    end
+
+    -- HACK!
+    if self.x == last_x and self.y == last_y then
+        self.sprite:pause()
     end
 end
 
@@ -168,7 +176,15 @@ function Scientist:decide()
     if self.cost and self.cost < 5 then
         self.ai_state = 'move_away'
     else
-        self.ai_state = 'move_random'
+        if math.random() < 0.33 then
+            self.ai_state = 'move_none'
+        else
+            self.ai_state = 'move_random'
+            -- Find a random tile
+            local adj_tiles = game.area:getAdjacentTileVectorsWorld(self.x, self.y)
+            local idx = math.random(1, #adj_tiles)
+            self.next_random = adj_tiles[idx]
+        end
     end
 end
 

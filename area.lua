@@ -85,6 +85,23 @@ function Area:floorAt(row, col)
 end
 
 
+-- Get vectors to adjacent foor tiles
+function Area:getAdjacentTileVectors(x, y)
+    local ortho = {}
+    for i, d in ipairs { {-1,0}, {1,0}, {0,-1}, {0,1} } do 
+        local dx, dy = unpack(d)
+        if self:floorAt(x+dx, y+dy) then
+            table.insert(ortho, {dx, dy})
+        end
+    end
+    return ortho
+end
+
+function Area:getAdjacentTileVectorsWorld(x, y)
+    return self:getAdjacentTileVectors(Area.worldToTile(x,y))
+end
+
+
 -- Get the world position of a conneciton tile based on name
 function Area:getConnectionWorldPosition(areaname)
     for i, tile in ipairs(self.logic_tiles) do

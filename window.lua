@@ -77,7 +77,7 @@ local Button = leaf.Object:extend()
 ChamberWindow = Window:extend()
 
 
-local INCUBATE_TIME = 0.1
+local INCUBATE_TIME = 2
 
 function ChamberWindow:init(callback)
     Window.init(self, "", callback)
@@ -85,6 +85,7 @@ function ChamberWindow:init(callback)
     self.choosing = true
     self.choice = 0
     self.incubate_timer = 0
+    self.max_slider = 3000
     self.slider = Slider()
 
     self.btn = {
@@ -97,7 +98,7 @@ function ChamberWindow:init(callback)
     for i=1, nbodies do 
         self.mutated_stats[i] = {}
         for name, value in pairs(game.player.stats) do
-            self.mutated_stats[i][name] = value + 2
+            self.mutated_stats[i][name] = value
         end
     end
 
@@ -105,7 +106,15 @@ function ChamberWindow:init(callback)
 end
 
 function ChamberWindow:mutateStats()
-    -- TODO
+    local max_mutation = 7
+    local min_delta = 1
+    local optimism = 0.25
+    local delta = math.max(self.slider.value * max_mutation, min_delta)
+    for i, stats in ipairs(self.mutated_stats) do
+        for name, value in pairs(stats) do
+            stats[name] = math.ceil(value + delta * (math.random() * 2 - 1.0 + optimism))
+        end
+    end
 end
 
 local function rprint(text, x, y, w)
@@ -132,7 +141,11 @@ function ChamberWindow:drawContent()
         self.btn.ok:draw(left, top + textarea * 4, 120)
         self.btn.cancel:draw(left + 150, top + textarea * 4, 120)
     elseif self.incubate_timer < INCUBATE_TIME then
-        love.graphics.printf("Incubating...", left, top, right - left)
+        local text = "Incubating"
+        for i=1,self.incubate_timer * 10 do
+            text = text .. "."
+        end
+        love.graphics.printf(text, left, top, right - left)
     else
         love.graphics.printf("Select a new body", left, top, right - left)
 
@@ -172,7 +185,7 @@ function ChamberWindow:update(dt)
     end
 
     -- Update internal value
-    self.choice = math.floor(self.slider.value * 3000)
+    self.choice = math.floor(self.slider.value * self.max_slider)
 
     return true
 end
