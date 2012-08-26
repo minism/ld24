@@ -202,8 +202,10 @@ function Scientist:decide()
             self.ai_state = 'move_random'
             -- Find a random tile
             local adj_tiles = game.area:getAdjacentTileVectorsWorld(self.x, self.y)
-            local idx = math.random(1, #adj_tiles)
-            self.next_random = adj_tiles[idx]
+            if #adj_tiles > 0 then
+                local idx = math.random(1, #adj_tiles)
+                self.next_random = adj_tiles[idx]
+            end
         end
     end
 end

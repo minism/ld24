@@ -91,8 +91,15 @@ end
 -- Check for major changes
 function game.checkMajorState()
     -- Player dead?
-    if game.player.state.health < 0 then
+    if game.player.state.health <= 0 then
         game.respawn()
+    end
+
+    -- Player won?
+    if game.state.subjects <= 0 then
+        game.showWindow("Congratulations.  You freed all of the survivors!  Your time was ", function()
+            love.event.quit()
+        end)
     end
 end
 
