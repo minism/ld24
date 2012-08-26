@@ -60,6 +60,7 @@ function Console:init()
 end
 
 function Console:write(data)
+    if not config.debug then return end
     local message = Message(data)
     self.queue:push(message)
 end

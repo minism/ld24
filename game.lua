@@ -5,6 +5,7 @@ require 'item'
 
 local game = {}
 game.entities = {}
+game._entity_queue = {}
 
 
 function game.setup()
@@ -14,7 +15,6 @@ function game.setup()
 
     -- Setup player
     game.player = Player()
-    game.addEntity(game.player)
 
     -- Setup active area
     game.area = nil
@@ -60,11 +60,11 @@ function game.processSpecialTile(data)
         end,
 
         [62] = function()
-            table.insert(game.entities, Guard { x=x, y=y })
+            game.addEntity(Guard { x=x, y=y })
         end,
 
         [61] = function()
-            table.insert(game.entities, Scientist { x=x, y=y })
+            game.addEntity(Scientist { x=x, y=y })
         end,
     }
     if handlers[id] then handlers[id]() end
@@ -83,8 +83,24 @@ function game.loadArea(areaname)
     for i, spdata in ipairs(game.area.sp_init) do game.processSpecialTile(spdata) end
 end
 
+
+function game.dropModules(x, y)
+    local nmodules = math.random(1, 3)
+    for i=1, nmodules do
+        local theta = math.random() * math.pi * 2
+        local drop_velx, drop_vely = vector.rotate(1, 0, theta)
+        local mod = Module {
+            x = x,
+            y = y,
+            velx = drop_velx,
+            vely = drop_vely,
+        }
+        game.addEntity(mod)
+    end
+end
+
 function game.addEntity(e)
-    table.insert(game.entities, e)
+    table.insert(game._entity_queue, e)
 end
 
 
@@ -113,6 +129,11 @@ function game:draw()
 
             -- Draw blindness
             if config.blind then game:drawBlindness() end
+
+            if DBR then
+                color.debug()
+                love.graphics.rectangle("fill", unpack(DBR))
+            end
 
         love.graphics.pop()
     love.graphics.pop()
@@ -145,6 +166,12 @@ function game:drawBlindness()
     color.white()
 end
 
+function game.flushEntityQueue()
+    for i, entity in ipairs(game._entity_queue) do
+        table.insert(game.entities, entity)
+        game._entity_queue[i] = nil
+    end
+end
 
 function game:update(dt)
     -- Update global time manager
@@ -153,24 +180,39 @@ function game:update(dt)
     -- Update player
     game.player:update(dt)
 
-    -- Update entities
-    remove_if(game.entities, function(entity) 
-        entity:update(dt)
+    -- Add pending entities
+    game.flushEntityQueue()
 
-        -- Check for collisions
-        if entity.hit == "p_attack" and not entity.dead then
-            for i, entity2 in ipairs(game.entities) do
-                if entity2.hit == "enemy" then
-                    l, t, r, b = entity2:getCollisionRect()
-                    if rect_contains(l, t, r, b, entity.x, entity.y) then
-                        entity2:getHit(entity)
-                        entity.dead = true
+    -- Update entities
+    remove_if(game.entities, function(entity)
+        if entity ~= nil then 
+            entity:update(dt)
+
+            -- Check for collisions
+            if entity.hit == "p_attack" and not entity.dead then
+                for i, entity2 in ipairs(game.entities) do
+                    if entity2.hit == "enemy" then
+                        l, t, r, b = entity2:getCollisionRect()
+                        if rect_contains(l, t, r, b, entity.x, entity.y) then
+                            entity2:getHit(entity)
+                            entity.dead = true
+                        end
                     end
                 end
             end
-        end
 
-        return entity.dead == true
+            -- Check player collisions
+            if entity.hit == "module" and not entity.dead then
+                local a,b,c,d = entity:getCollisionRect()
+                local e,f,g,h = game.player:getCollisionRect()
+                if rect_intersects(a,b,c,d,e,f,g,h) then
+                    entity:die()
+                end
+            end
+
+            return entity.dead == true
+        end
+        return false
     end)
 
 end

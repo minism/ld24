@@ -64,6 +64,7 @@ function Entity:draw()
         self:applyTransform()
         self:drawLocal()
     love.graphics.pop()
+
     if config.collision then
         color.debug()
         local x, y, x2, y2 = self:getCollisionRect()
@@ -94,4 +95,8 @@ end
 
 function Entity:tryMove(velx, vely, dt)
     return self:move(velx, vely, dt, true)
+end
+
+function Entity:die()
+    self.dead = true
 end

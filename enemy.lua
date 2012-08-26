@@ -83,10 +83,6 @@ function Enemy:getHit(attack_entity)
     end
 end
 
-function Enemy:die()
-    self.dead = true
-end
-
 function Enemy:update(dt)
     -- Update ai timer
     self.ai_timer = self.ai_timer - dt
@@ -173,21 +169,8 @@ function Scientist:decide()
 end
 
 function Scientist:die()
+    game.dropModules(self.x, self.y)
     Enemy.die(self)
-    
-    -- Drop modules
-    -- local nmodules = math.random(1, 3)
-    -- for i=1, nmodules do
-    --     local theta = math.random() * math.pi * 2
-    --     local drop_velx, drop_vely = vector.rotate(1, 0, theta)
-    --     local mod = DNAModule {
-    --         x = self.x,
-    --         y = self.y,
-    --         velx = drop_velx,
-    --         vely = drop_vely,
-    --     }
-    --     game.addEntity(mod)
-    -- end
 end
 
 
