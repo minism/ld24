@@ -202,11 +202,14 @@ function game:update(dt)
             end
 
             -- Check player collisions
+
+            -- Module pickup
             if entity.hit == "module" and not entity.dead then
                 local a,b,c,d = entity:getCollisionRect()
                 local e,f,g,h = game.player:getCollisionRect()
                 if rect_intersects(a,b,c,d,e,f,g,h) then
                     entity:die()
+                    game.state.modules = game.state.modules + 1
                 end
             end
 

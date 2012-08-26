@@ -30,7 +30,7 @@ function rect_intersects(left1, top1, right1, bot1, left2, top2, right2, bot2)
         elseif bot2 >= top1 and bot2 <= bot1 then
             return true
         end
-    elseif right2 >= left1 and right2 >= right1 then
+    elseif right2 >= left1 and right2 <= right1 then
         if top2 >= top1 and top2 <= bot1 then
             return true
         elseif bot2 >= top1 and bot2 <= bot1 then
