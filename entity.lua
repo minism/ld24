@@ -34,9 +34,9 @@ function Entity:getHit(e) end
 
 function Entity:destroy()
     -- Destroy sprite
-    if self.sprite then
-        self.sprite:destroy()
-    end
+    -- if self.sprite then
+    --     self.sprite:destroy()
+    -- end
 end
 
 

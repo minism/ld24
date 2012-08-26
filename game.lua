@@ -147,6 +147,9 @@ function game.processSpecialTile(data)
             game.addEntity(Scientist { x=x, y=y })
         end,
 
+        -- [60] = function()
+            -- game.
+
         [58] = function()
             local door = Door {x=x, y=y}
             game.addEntity(door)
@@ -163,6 +166,8 @@ function game.processSpecialTile(data)
             game.area.chamber = Chamber {x = x, y = y, used = game.area.flags.used_chamber}
             game.addEntity(game.area.chamber)
         end
+
+
     }
     if handlers[id] then handlers[id]() end
 end
@@ -182,6 +187,33 @@ function game.destroyEntities()
 end
 
 
+function game.saveAreaState()
+    -- Freeze entities
+    game.area.save_state.entities = {}
+    for i, entity in ipairs(game.entities) do
+        table.insert(game.area.save_state.entities, entity)
+    end
+    game.area.save_state.doors = {}
+    for i, door in ipairs(game.doors) do
+        table.insert(game.area.save_state.doors, door)
+    end
+end
+
+function game.restoreAreaState()
+    -- Restore entities
+    if game.area.save_state.entities then
+        for i, entity in ipairs(game.area.save_state.entities) do
+            game.addEntity(entity)
+        end
+    end
+    if game.area.save_state.doors then
+        for i, door in ipairs(game.area.save_state.doors) do
+            table.insert(game.doors, door)
+        end
+    end
+end
+
+
 function game.loadArea(areaname, force_x, force_y)
     local lastarea_name = nil
     if game.area and game.area.name then
@@ -189,16 +221,20 @@ function game.loadArea(areaname, force_x, force_y)
     end
 
     -- Dump previous data
+    if game.area then game.saveAreaState() end
     game.doors = {}
     game.destroyEntities()
     game.entities = {}
     game._entity_queue = {}
-    if game.area then game.area:destroy() end
+
 
     -- Load area data
     game.area = area_manager.get(areaname)
     game.area:load()
     
+    -- Restore area state, if there was any
+    game.restoreAreaState()
+
     -- Prepare the render index
     game._render_index = {}
     for i=1, game.area.data.width * game.area.data.height do
@@ -206,7 +242,10 @@ function game.loadArea(areaname, force_x, force_y)
     end
 
     -- React to any sp tile init data
-    for i, spdata in ipairs(game.area.sp_init) do game.processSpecialTile(spdata) end
+    if game.area.init then
+        for i, spdata in ipairs(game.area.sp_init) do game.processSpecialTile(spdata) end
+        game.area.init = false
+    end
 
     -- Position player based on matching connecting tile, if exists
     if lastarea_name then
@@ -216,7 +255,6 @@ function game.loadArea(areaname, force_x, force_y)
             game.player.y = y
         end
     end
-
 
     -- Forcibly position player
     if force_x and force_y then

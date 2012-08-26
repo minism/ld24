@@ -4,7 +4,10 @@ require 'lib.astar.astar'
 area_manager = {
     areas = {},
     get = function(areaname)
-        return area_manager.areas[areaname] or Area(areaname)
+        if not area_manager.areas[areaname] then
+            area_manager.areas[areaname] = Area(areaname)
+        end
+        return area_manager.areas[areaname]
     end
 }
 
@@ -41,9 +44,13 @@ function Area:init(areaname)
     -- For sp init data
     self.sp_init = {}
 
+    -- For saved state between transitions
+    self.save_state = {}
+
     -- Persistent flags
     self.flags = {
-        lights = true,
+        init = true,
+        lights = false,
         used_chamber = false,
     }
 end
