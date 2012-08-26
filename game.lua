@@ -62,7 +62,7 @@ function game.setup()
     -- Start music
     if config.music then
         assets.music.music:setLooping(true)
-        assets.music.music:setVolume(0.7)
+        assets.music.music:setVolume(0.6)
         assets.music.music:play()
     end
 
@@ -81,8 +81,6 @@ function game.checkPlayerTileEvent(px, py)
     if tile then
         if tile.type == "connection" then 
             game.gotoArea(tile.area)
-        elseif tile.type == "chamber" then
-            game.useChamber()
         end
     end
 
@@ -103,10 +101,14 @@ function game.checkPlayerPositionEvent(px, py)
         b = b - Door.range
         c = c + Door.range
         d = d + Door.range
+        local last = door.sprite.reverse
         if rect_contains(a,b,c,d,px,py) then
             door.sprite.reverse = false
         else
             door.sprite.reverse = true
+        end
+        if door.sprite.reverse ~= last then
+            audio.play('door')
         end
     end
 end
@@ -201,6 +203,7 @@ end
 
 -- Go to an area from a connecting tile
 function game.gotoArea(areaname)
+    audio.play('area')
     game.pending_load = areaname
     game.timers.fade_screen = AREA_FADE_TIME
 end
@@ -231,6 +234,8 @@ end
 function game.useChamber()
     -- Check if already used in this area
     if not game.area.flags.used_chamber then
+        audio.play('chamber')
+
         -- Show chamber window
         local chamber_win = ChamberWindow(function(success)
             if success == true then
@@ -461,6 +466,7 @@ function game:update(dt)
                 local a,b,c,d = entity:getCollisionRect()
                 local e,f,g,h = game.player:getCollisionRect()
                 if rect_intersects(a,b,c,d,e,f,g,h) then
+                    audio.play('pickup')
                     entity:die()
                     game.state.modules = game.state.modules + 1
                 end

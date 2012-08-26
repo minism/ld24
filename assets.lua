@@ -6,10 +6,7 @@ function assets.load()
     assets.tilesets = leaf.fs.loadImages('tilesets', assets.loadCallback)
     assets.gfx = leaf.fs.loadImages('gfx', assets.loadCallback)
     assets.areas = leaf.fs.loadChunks('areas', assets.loadCallback)
-
-    -- Load sfx
-    audio.load()
-
+    assets.sfx = leaf.fs.loadSounds('sfx', assets.loadCallback)
     assets.music = {
         music = love.audio.newSource('music/music.mp3', 'streaming')
     }

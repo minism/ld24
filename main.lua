@@ -3,6 +3,7 @@ require 'os'
 tween = require 'lib.tween'
 inspect = require 'lib.inspect'
 _ = require 'lib.underscore'
+require 'lib.slam'
 
 -- Import everything from leaf directly
 require 'leaf'
