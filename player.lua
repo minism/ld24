@@ -88,6 +88,7 @@ end
 
 function Player:update(dt)
     -- Store last tile position
+    local last_x, last_y = self.x, self.y
     local last_tx, last_ty = Area.worldToTile(self.x, self.y)
 
     -- Update internal time handler
@@ -125,17 +126,15 @@ function Player:update(dt)
     end
 
 
-    -- If we moved tiles, check for logical tiles on map
+    -- If we moved tiles, alert game
     local tx, ty = Area.worldToTile(self.x, self.y)
     if last_tx ~= tx or last_ty ~= ty then
-        local tile = game.area:logicTileAtWorld(self.x, self.y)
-        if tile then
-            if tile.type == "connection" then 
-                game.gotoArea(tile.area)
-            elseif tile.type == "chamber" then
-                game.useChamber()
-            end
-        end
+        game.checkPlayerTileEvent(self.x, self.y)
+    end
+
+    -- If we moved position, alert game
+    if last_x ~= self.x or last_y ~= self.y then
+        game.checkPlayerPositionEvent(self.x, self.y)
     end
 end
 

@@ -16,15 +16,12 @@ function Sprite:destroy()
     if self.timer then self.timer:kill() end
 end
 
-function Sprite:draw(x, y)
-    if self.image == assets.gfx.door_left then
-        console:write("yep")
-    end
+function Sprite:draw(x, y, r, sx, sy)
     local quad = self.quads[self.frame]
     local x = x or 0
     local y = y or 0
     if quad then
-        love.graphics.drawq(self.image, self.quads[self.frame], x, y)
+        love.graphics.drawq(self.image, self.quads[self.frame], x, y, r, sx, sy)
     end
 end
 

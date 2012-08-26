@@ -18,6 +18,7 @@ function game.setup()
 
     -- Setup active area
     game.area = nil
+    game.doors = {}
 
     -- Setup graphics
     game.blindnessStencil = love.graphics.newStencil(function() 
@@ -51,6 +52,36 @@ function game.setup()
 end
 
 
+-- Player entered a tile, do anything necessary
+function game.checkPlayerTileEvent(px, py)
+    -- Check for area logic tiles
+    local tile = game.area:logicTileAtWorld(px, py)
+    if tile then
+        if tile.type == "connection" then 
+            game.gotoArea(tile.area)
+        elseif tile.type == "chamber" then
+            game.useChamber()
+        end
+    end
+end
+
+function game.checkPlayerPositionEvent(px, py)
+    -- Check for door
+    for i, door in ipairs(game.doors) do
+        local a,b,c,d = door:getCollisionRect()
+        a = a - Door.range
+        b = b - Door.range
+        c = c + Door.range
+        d = d + Door.range
+        if rect_contains(a,b,c,d,px,py) then
+            door.sprite.reverse = false
+        else
+            door.sprite.reverse = true
+        end
+    end
+end
+
+
 function game.processSpecialTile(data)
     local id, x, y = data.id, data.x, data.y
     local handlers = {
@@ -68,11 +99,15 @@ function game.processSpecialTile(data)
         end,
 
         [58] = function()
-            game.addEntity(Door {x=x, y=y})
+            local door = Door {x=x, y=y}
+            game.addEntity(door)
+            table.insert(game.doors, door)
         end,
 
         [59] = function()
-            -- game.addEntity(Door {x=x, y=y, left=false})
+            local door = Door {x=x, y=y, left=false}
+            game.addEntity(door)
+            table.insert(game.doors, door)
         end,
 
     }
@@ -100,9 +135,9 @@ function game.loadArea(areaname)
         lastarea_name = game.area.name
     end
 
-    game.destroyEntities()
-
     -- Dump previous data
+    game.doors = {}
+    game.destroyEntities()
     game.entities = {}
     game._entity_queue = {}
 
