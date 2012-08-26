@@ -1,4 +1,4 @@
-Attack = Entity:extend()
+Attack = Entity:extend {}
 
 function Attack:init(conf)
     local conf = extend({
@@ -17,7 +17,9 @@ function Attack:drawLocal()
 end
 
 
-Bullet = Attack:extend()
+Bullet = Attack:extend {
+    name = "Blaster"
+}
 
 function Bullet:init(conf)
     local conf = extend({
@@ -48,7 +50,9 @@ function Bullet:update(dt)
 end
 
 
-Punch = Attack:extend()
+Punch = Attack:extend { 
+    name = "Fist"
+}
 
 function Punch:init(conf)
     local conf = extend({

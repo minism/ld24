@@ -24,7 +24,7 @@ function Player:init(conf)
         modes = 8,
     }
 
-    self.weapon = Bullet
+    self.state.weapon = Bullet
 
     -- Player time instance
     self.time = Time()
@@ -35,6 +35,7 @@ end
 local stat_scales = {
     speed = 7,
     vision = 15,
+    vitality = 3,
 }
 function Player:stat(stat)
     local scale = stat_scales[stat] or 1
@@ -71,7 +72,7 @@ function Player:attack(x, y)
 
         -- Insert attack entity
         local px, py = self:getCenter()
-        game.addEntity(self.weapon {
+        game.addEntity(self.state.weapon {
             x = px,
             y = py,
             velx = x,

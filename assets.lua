@@ -18,11 +18,11 @@ function assets.load()
         img:setFilter('nearest', 'nearest')
     end
 
-    -- assets.font = {
-    --     small = love.graphics.newFont('font/font.ttf', 32),
-    --     large = love.graphics.newFont('font/font.ttf', 48),
-    --     huge = love.graphics.newFont('font/font.ttf', 72),
-    -- }
+    assets.font = {
+        ui = love.graphics.newFont('font/font.ttf', 18),
+        large = love.graphics.newFont('font/font.ttf', 48),
+        huge = love.graphics.newFont('font/font.ttf', 72),
+    }
 end
 
 function assets.loadCallback(progress, path)
