@@ -5,8 +5,8 @@ function love.conf(t)
 	t.author = "joshbothun@gmail.com"
 	t.identity = nil
 	t.console = false
-	t.screen.width = 1024
-	t.screen.height = 768
+	t.screen.width = 1000
+	t.screen.height = 720
 	t.screen.fullscreen = false
 	t.screen.vsync = false
 	t.screen.fsaa = 0
