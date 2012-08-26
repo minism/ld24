@@ -74,6 +74,7 @@ end
 
 
 function Enemy:getHit(attack_entity)
+    audio.play('hit')
     self.state.health = self.state.health - attack_entity.damage
     if self.state.health <= 0 then
         self:die()
