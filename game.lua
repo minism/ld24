@@ -7,6 +7,7 @@ require 'objects'
 
 local game = {}
 
+local AREA_FADE_TIME = 0.15
 
 function game.setup()
     -- Load everything
@@ -47,8 +48,17 @@ function game.setup()
         modules = 0,
     }
 
+    -- Extra timers
+    game.timers = {
+        fade_screen = 0
+    }
+    game.pending_load = nil
+
+    -- Screen overlay
+    game.overlay = {0, 0, 0, 0}
+
     -- Test
-    game.loadArea('base')
+    game.loadArea('start')
 end
 
 
@@ -118,12 +128,12 @@ end
 function game.destroyEntities()
     if game.entities then
         for i, entity in ipairs(game.entities) do
-            entitiy:destroy()
+            if entity then entity:destroy() end
         end
     end
     if game._entity_queue then
         for i, entity in ipairs(game._entity_queue) do
-            entitiy:destroy()
+            if entity then entity:destroy() end
         end
     end
 end
@@ -167,8 +177,25 @@ end
 
 -- Go to an area from a connecting tile
 function game.gotoArea(areaname)
-    game.loadArea(areaname)
+    game.pending_load = areaname
+    game.timers.fade_screen = AREA_FADE_TIME
 end
+
+
+-- Handle timer events
+function game.checkTimers()
+    if game.timers.fade_screen > 0 then
+        local alpha = math.min(game.timers.fade_screen / AREA_FADE_TIME * 255, 255)
+        if game.pending_load then alpha = 1.0 - alpha end
+        game.overlay[4] = alpha
+    elseif game.pending_load then
+        game.loadArea(game.pending_load)
+        game.pending_load = nil
+        game.timers.fade_screen = AREA_FADE_TIME
+    end
+end
+
+
 
 
 -- Try to use a chamber
@@ -328,6 +355,12 @@ function game:draw()
     -- Draw UI
     ui.draw()
 
+    -- Draw overlay
+    if game.overlay then
+        love.graphics.setColor(unpack(game.overlay))
+        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+    end
+
     -- Draw debug stuff
     if config.debug and config.show_console then
         console:drawLog()
@@ -360,6 +393,12 @@ end
 function game:update(dt)
     -- Update global time manager
     time:update(dt)
+
+    -- Update extra timers
+    for i, timer in pairs(game.timers) do
+        game.timers[i] = timer - dt
+    end
+    game.checkTimers()
 
     -- Update player
     game.player:update(dt)
