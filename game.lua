@@ -2,6 +2,7 @@ require 'area'
 require 'player'
 require 'enemy'
 require 'item'
+require 'window'
 
 local game = {}
 
@@ -35,7 +36,7 @@ function game.setup()
 
     -- Persistent flags
     game.flags = {
-
+        first_chamber = true,
     }
 
     -- Game state
@@ -100,6 +101,34 @@ end
 -- Go to an area from a connecting tile
 function game.gotoArea(areaname)
     game.loadArea(areaname)
+end
+
+
+-- Try to use a chamber
+function game.useChamber()
+    -- Check if already used in this area
+    if not game.area.flags.used_chamber then
+        -- Show chamber window
+        local chamber_win = ChamberWindow(function(success)
+            if success == true then
+                game.area.flags.used_chamber = true
+            end
+        end)
+        app:pushContext(chamber_win)
+
+        -- Show on first usage in game
+        if game.flags.first_chamber then
+            game.flags.first_chamber = false
+            game.showWindow("Hyperincubator explanation...")
+        end
+    end
+end
+
+
+-- Display a modal dialog
+function game.showWindow(text, callback)
+    local win = Window(text, callback)
+    app:pushContext(win)
 end
 
 

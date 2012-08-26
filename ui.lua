@@ -2,10 +2,12 @@ local ui = {
     height = 90
 }
 
-function ui.drawBox(left, top, width, height)
-    color.ui_bg()
+function ui.drawBox(left, top, width, height, bg, border)
+    local color_bg = bg or color.ui_bg
+    local color_border = border or color.ui_border
+    color_bg()
     love.graphics.rectangle("fill", left, top, width, height)
-    color.ui_border()
+    color_border()
     local border = 3
     for i=1,1 do
         local frame = border * i
@@ -14,11 +16,19 @@ function ui.drawBox(left, top, width, height)
     end
 end
 
-function ui.drawBar(left, top, width, amount)
+function ui.drawBar(left, top, width, amount, origin)
     -- Draw bar
     color.ui_bar()
     local height =  assets.font.ui:getHeight()
     love.graphics.rectangle("fill", left, top, width * amount, height)
+
+    -- Draw origin
+    if origin then
+        color.ui_font()
+        love.graphics.setLineWidth(1)
+        local ox = config.starting_stat / config.max_stat
+        love.graphics.line(left + width * ox, top, left + width * ox, top + height)
+    end
 
     -- Draw frame
     color.ui_font()
@@ -27,7 +37,7 @@ function ui.drawBar(left, top, width, amount)
 end
 
 
-function rprint(text, x, y, w)
+local function rprint(text, x, y, w)
     love.graphics.printf(text, x, y, w, 'right')
 end
 
@@ -79,10 +89,10 @@ function ui.draw()
         rprint("VISION:", bx + padding,     by + padding + line_spacing * 2, col_spacing + 10)
         rprint("VITALITY:", bx + padding,   by + padding + line_spacing * 3, col_spacing + 10)
 
-        ui.drawBar(bx + padding + col_spacing + 20, by + padding + line_spacing * 0, 100, player.stats.speed / 30)
-        ui.drawBar(bx + padding + col_spacing + 20, by + padding + line_spacing * 1, 100, player.stats.focus / 30)
-        ui.drawBar(bx + padding + col_spacing + 20, by + padding + line_spacing * 2, 100, player.stats.vision / 30)
-        ui.drawBar(bx + padding + col_spacing + 20, by + padding + line_spacing * 3, 100, player.stats.vitality / 30)
+        ui.drawBar(bx + padding + col_spacing + 20, by + padding + line_spacing * 0, 100, player.stats.speed / config.max_stat, true)
+        ui.drawBar(bx + padding + col_spacing + 20, by + padding + line_spacing * 1, 100, player.stats.focus / config.max_stat, true)
+        ui.drawBar(bx + padding + col_spacing + 20, by + padding + line_spacing * 2, 100, player.stats.vision / config.max_stat, true)
+        ui.drawBar(bx + padding + col_spacing + 20, by + padding + line_spacing * 3, 100, player.stats.vitality / config.max_stat, true)
 
 end
 

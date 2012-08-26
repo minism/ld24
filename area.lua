@@ -31,7 +31,8 @@ function Area:init(areaname)
 
     -- Persistent flags
     self.flags = {
-    
+        lights = false,
+        used_chamber = false,
     }
 end
 
@@ -100,7 +101,7 @@ function Area:load()
     self.tilelayers.sp = self:getLayer('sp')
     assert(self.tilelayers.floor.width, "No floor layer")
 
-    -- Process special initializer tiles
+    -- Process map SP layer
     self.sp_init = {}
     local layer = self.tilelayers.sp
     if layer then
@@ -114,6 +115,16 @@ function Area:load()
                     x = wx + WORLD_TILESIZE / 2,
                     y = wy + WORLD_TILESIZE / 2,
                 })
+
+                -- HACK: add chamber as a logic tile
+                if tile_id == 57 then
+                    local tile = LogicTile {
+                        x = x,
+                        y = y,
+                        type = 'chamber',
+                    }
+                    table.insert(self.logic_tiles, tile)
+                end
             end
         end
     end

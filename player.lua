@@ -132,6 +132,8 @@ function Player:update(dt)
         if tile then
             if tile.type == "connection" then 
                 game.gotoArea(tile.area)
+            elseif tile.type == "chamber" then
+                game.useChamber()
             end
         end
     end

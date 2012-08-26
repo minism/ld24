@@ -59,9 +59,22 @@ end
 
 -- Reroute all love callbacks to this app
 function App:bind()
-    for i, func in ipairs{'update', 'keypressed', 'mousepressed', 'mousereleased', 'quit', 'draw'} do
+    -- Run draw in normal order
+    love.draw = function (...)
+        for i, context in ipairs(self.cstack) do
+            if context.draw and type(context.draw == 'function') then 
+                if context.draw(context, ...) == true then
+                    break
+                end
+            end
+        end
+    end
+
+    -- Run everything else in reverse order
+    for i, func in ipairs{'update', 'keypressed', 'mousepressed', 'mousereleased', 'quit'} do
         love[func] = function (...)
-            for i, context in ipairs(self.cstack) do
+            for j=#self.cstack, 1, -1 do
+                local context = self.cstack[j]
                 if context[func] and type(context[func] == 'function') then 
                     if context[func](context, ...) == true then
                         break

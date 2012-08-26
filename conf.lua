@@ -34,4 +34,8 @@ config = {
 	blind = false,
 	iso = true,
 	scale = 3,
+
+
+	max_stat = 30,
+	starting_stat = 10,
 }
