@@ -72,6 +72,11 @@ function Enemy:init(conf)
     self.ai_timer = 0
 end
 
+function Enemy:die()
+    audio.play('kill')
+    Entity.die(self)
+end
+
 
 function Enemy:getHit(attack_entity)
     audio.play('hit')
