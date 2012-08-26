@@ -24,7 +24,7 @@ function Player:init(conf)
         modes = 8,
     }
 
-    self.state.weapon = Bullet
+    self.state.weapon = Punch
 
     -- Player time instance
     self.time = Time()
@@ -36,6 +36,7 @@ local stat_scales = {
     speed = 4,
     vision = 10,
     vitality = 3,
+    focus = 1 / 6,
 }
 function Player:stat(stat)
     local scale = stat_scales[stat] or 1
@@ -62,7 +63,7 @@ function Player:processInput()
 end
 
 function Player:getAttackTime()
-    return self:stat('focus') / 20
+    return 1 / self:stat('focus')
 end
 
 -- Attack on a vector with current weapon

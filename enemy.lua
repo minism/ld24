@@ -79,6 +79,7 @@ function Enemy:init(conf)
     Humanoid.init(self, conf)
 
     -- Setup AI 
+    self.decide_rate = 1 / 20
     self.ai_state = 'idle'
     self.ai_timer = 0
 end
@@ -100,7 +101,7 @@ function Enemy:update(dt)
     -- Update ai timer
     self.ai_timer = self.ai_timer - dt
     if self.ai_timer < 0 then
-        self.ai_timer = self.speed / 20
+        self.ai_timer = self.speed * self.decide_rate
         self:decide()
     end
 
@@ -174,15 +175,18 @@ function Scientist:init(conf)
         frame_h = 16,
         modes = 8,
     }
+    self.decide_rate = 1 / 20 / 6
 end
 
 function Scientist:decide()
     Enemy.decide(self)
     if self.cost and self.cost < 5 then
-        self.ai_state = 'move_away'
+        -- Dont do this for now
+        -- self.ai_state = 'move_away'
     else
-        if math.random() < 0.33 then
+        if math.random() < 0.2 then
             self.ai_state = 'move_none'
+            self.ai_timer = self.decide_rate * 2
         else
             self.ai_state = 'move_random'
             -- Find a random tile

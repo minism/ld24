@@ -10,6 +10,8 @@ local game = {}
 local AREA_FADE_TIME = 0.15
 local INIT_FADE_TIME = 3
 
+local CHAMBER_MODULES = 10
+
 function game.setup()
     -- Load everything
     assets.load()
@@ -17,6 +19,7 @@ function game.setup()
 
     -- Setup player
     game.player = Player()
+    game.player.state.health = game.player:stat('vitality')
 
     -- Setup active area
     game.area = nil
@@ -73,7 +76,7 @@ function game.setup()
     end
 
     -- Start dialog
-    
+
 
 
     -- Load first area
@@ -356,31 +359,42 @@ end
 function game.useChamber()
     -- Check if already used in this area
     if not game.area.flags.used_chamber then
-        audio.play('chamber')
 
-        -- Show chamber window
-        local chamber_win = ChamberWindow(function(success)
-            if success == true then
-                -- Restore health
-                game.player.state.health = game.player:stat('vitality')
+        -- Check if enough modules
+        if game.state.modules > CHAMBER_MODULES then
+            game.state.modules = game.state.modules - CHAMBER_MODULES
 
-                -- Save for death
-                game.state.save.area = game.area.name
-                game.state.save.x = game.area.chamber.x
-                game.state.save.y = game.area.chamber.y
+            -- PLay sound
+            audio.play('chamber')
 
-                -- Mark as used
-                game.area.chamber.used = true
-                game.area.flags.used_chamber = true
-            end
-        end)
-        app:pushContext(chamber_win)
+            -- Show chamber window
+            local chamber_win = ChamberWindow(function(success)
+                if success == true then
+                    -- Restore health
+                    game.player.state.health = game.player:stat('vitality')
 
-        -- Show on first usage in game
-        if game.flags.first_chamber then
-            game.flags.first_chamber = false
-            game.showWindow("Hyperincubator explanation...")
+                    -- Save for death
+                    game.state.save.area = game.area.name
+                    game.state.save.x = game.area.chamber.x
+                    game.state.save.y = game.area.chamber.y
+
+                    -- Mark as used
+                    game.area.chamber.used = true
+                    game.area.flags.used_chamber = true
+                end
+            end)
+            app:pushContext(chamber_win)
         end
+    else
+        -- TODO: Error sound
+        game.showWindow("You need 10 DNA modules to be able to use this incubation chamber.")
+    end
+
+
+    -- Show on first usage in game
+    if game.flags.first_chamber then
+        game.flags.first_chamber = false
+        game.showWindow("Hyperincubator explanation...")
     end
 end
 
@@ -468,6 +482,9 @@ function game.drawScene()
 
             -- Process tiles
             love.graphics.setColor(255, 255, 255)
+            if DBGX == x and DBGY == y then
+                love.graphics.setColor(0, 255, 255)
+            end
             for i, layer in ipairs(game.area.data.layers) do
                 -- Dont draw special tiles or floor
                 if layer.name ~= 'sp' and layer.name ~= 'floor' and layer.type == 'tilelayer' then

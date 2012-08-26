@@ -27,13 +27,13 @@ end
 -- Global game config
 config = {
 	debug = true,
-	start_area = 'test',
+	start_area = 'start',
 	music = true,
 
 
-	show_console = true,
+	show_console = false,
 	collision = false,
-	blind = false,
+	blind = true,
 	iso = true,
 	scale = 3,
 

@@ -35,12 +35,13 @@ function Bullet:init(conf)
         w = 4,
         h = 4,
         bound = 6,
-        speed = 150,
+        speed = 80,
         damage = 5,
     }, conf or {})
     Attack.init(self, conf)
 
 
+    if self.hit == 'p_attack' then self.speed = 150 end
     -- Play my sound
     audio.play 'gun'
 end

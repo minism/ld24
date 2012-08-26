@@ -22,7 +22,7 @@ end
 
 
 Door = TileEntity:extend {
-    range = 50,
+    range = 35,
 }
 
 function Door:init(conf)
