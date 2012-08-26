@@ -8,6 +8,7 @@ require 'objects'
 local game = {}
 
 local AREA_FADE_TIME = 0.15
+local INIT_FADE_TIME = 3
 
 function game.setup()
     -- Load everything
@@ -50,7 +51,8 @@ function game.setup()
 
     -- Extra timers
     game.timers = {
-        fade_screen = 0
+        fade_screen = 0,
+        init_fade = INIT_FADE_TIME,  --start fading in
     }
     game.pending_load = nil
 
@@ -183,7 +185,7 @@ end
 
 
 -- Handle timer events
-function game.checkTimers()
+function game.handleTimers()
     if game.timers.fade_screen > 0 then
         local alpha = math.min(game.timers.fade_screen / AREA_FADE_TIME * 255, 255)
         if game.pending_load then alpha = 1.0 - alpha end
@@ -192,6 +194,11 @@ function game.checkTimers()
         game.loadArea(game.pending_load)
         game.pending_load = nil
         game.timers.fade_screen = AREA_FADE_TIME
+    end
+
+    if game.timers.init_fade > 0 then
+        local alpha = math.min(game.timers.init_fade / INIT_FADE_TIME * 255, 255)
+        game.overlay[4] = alpha
     end
 end
 
@@ -398,7 +405,7 @@ function game:update(dt)
     for i, timer in pairs(game.timers) do
         game.timers[i] = timer - dt
     end
-    game.checkTimers()
+    game.handleTimers()
 
     -- Update player
     game.player:update(dt)
