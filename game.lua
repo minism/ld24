@@ -75,7 +75,7 @@ function game.setup()
 
     -- Start dialog
 
-    game.showWindow("LOOKING AROUND YOU CAN SEE SEVERAL OTHER TEST SUBJECTS IN THE ROOM.  \n\nYOU BEGIN TO FILL WITH RAGE.", function()
+    game.showWindow("(MOVE AROUND WITH: W, A, S, D)  \n\n(ATTACK WITH: I, J, K, L)", function()
         -- Start music
         if config.music then
             assets.music.music:setLooping(true)
@@ -84,6 +84,7 @@ function game.setup()
         end
     end)
 
+    game.showWindow "LOOKING AROUND YOU CAN SEE SEVERAL OTHER TEST SUBJECTS IN THE ROOM.  \n\nYOU BEGIN TO FILL WITH RAGE."
     game.showWindow "YOU AWAKE IN THE SHATTERED REMAINS OF A HOLDING CELL.  \n\nFOR SOME TIME NOW YOU HAVE BEEN HELD CAPTIVE HERE AT HumanTECH AGAINST YOUR WILL.  \n\nYOUR BODY HAS BEEN PROVIDING A RESEARCH SUBJECT FOR GENETIC MUTATION DESIGN."
 
 

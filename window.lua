@@ -31,7 +31,9 @@ function Window:draw()
     local y = sh / 2 * (1 - anim_alpha) + self.margin
     local w = sw - self.margin * 2
     local h = anim_alpha * (sh - self.margin * 2)
-    ui.drawBox(x, y, w, h, color.win_bg, color.white)
+    if self.timer > 0 then
+        ui.drawBox(x, y, w, h, color.win_bg, color.white)
+    end
 
 
 
@@ -88,6 +90,7 @@ function ChamberWindow:init(callback)
     self.max_slider = 3000
     self.slider = Slider()
     self.margin = 100
+    self.trigger_inc_sound = false
 
     self.btn = {
         ok = Button("Incubate"),
@@ -196,6 +199,12 @@ function ChamberWindow:update(dt)
 
     -- Update internal value
     self.choice = math.floor((1/5) * self.max_slider + 4/5 * self.slider.value * self.max_slider)
+
+
+    if not self.choosing and not self.trigger_inc_sound then
+        self.trigger_inc_sound = true
+        audio.play('use')
+    end
 
     return true
 end
