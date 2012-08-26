@@ -8,7 +8,7 @@ function Humanoid:init(conf)
     local conf = extend({
         w = 9,
         h = 16,
-        health = 10,
+        health = 15,
     }, conf or {})
     Entity.init(self, conf)
 

@@ -375,12 +375,6 @@ function game:draw()
 
             -- Draw blindness
             if config.blind then game:drawBlindness() end
-
-            if DBR then
-                color.debug()
-                love.graphics.rectangle("fill", unpack(DBR))
-            end
-
         love.graphics.pop()
     love.graphics.pop()
 
@@ -450,8 +444,9 @@ function game:update(dt)
             if entity.hit == "p_attack" and not entity.dead then
                 for i, entity2 in ipairs(game.entities) do
                     if entity2.hit == "enemy" then
-                        l, t, r, b = entity2:getCollisionRect()
-                        if rect_contains(l, t, r, b, entity.x, entity.y) then
+                        local a, b, c, d = entity:getCollisionRect()
+                        local e, f, g, h = entity2:getCollisionRect()
+                        if rect_intersects(a,b,c,d,e,f,g,h) then
                             entity2:getHit(entity)
                             entity.dead = true
                         end

@@ -24,7 +24,7 @@ function Player:init(conf)
         modes = 8,
     }
 
-    self.state.weapon = Bullet
+    self.state.weapon = Punch
 
     -- Player time instance
     self.time = Time()

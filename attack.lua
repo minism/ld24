@@ -31,7 +31,7 @@ function Bullet:init(conf)
         },
         w = 4,
         h = 4,
-        bound = 1,
+        bound = 3,
         speed = 150,
         damage = 5,
     }, conf or {})
@@ -66,12 +66,18 @@ function Punch:init(conf)
             frame_h = 8,
             speed = 0.015
         },
-        w = 4,
-        h = 4,
-        bound = 2,
+        w = 8,
+        h = 8,
+        bound = 12,
         damage = 10,
     }, conf or {})
     Attack.init(self, conf)
+
+    self.x = self.x + self.velx * 2 + 2
+    self.y = self.y + self.vely * 2 + 2
+
+    -- Play my sound
+    audio.play 'punch'
 end
 
 function Punch:update(dt)
@@ -82,13 +88,18 @@ function Punch:update(dt)
 end
 
 function Punch:draw()
-    local x, y, rot, sx, sy = iso.toOrtho(self.x + self.velx, self.y + self.vely)
+    local x, y, rot, sx, sy = iso.toOrtho(self.x, self.y)
     love.graphics.push()
-        love.graphics.translate(x, y)
+        love.graphics.translate(x - 16, y - 12)
         love.graphics.rotate(rot)
-        love.graphics.translate(-2, 0)
         love.graphics.scale(sx, sy)
-        love.graphics.rotate(vector.angle(self.velx, self.vely) - math.pi / 4)
+        -- love.graphics.rotate(vector.angle(self.velx, self.vely) - math.pi / 4)
         self.conf.sprite:draw(0, 0)
     love.graphics.pop()
+
+    if config.collision then
+        color.debug()
+        local x, y, x2, y2 = self:getCollisionRect()
+        love.graphics.rectangle('line', x, y, x2 - x, y2 - y)
+    end
 end
