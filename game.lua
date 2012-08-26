@@ -46,6 +46,7 @@ function game.setup()
         first_chamber = true,
         first_lights = true,
         first_subject = true,
+        got_blaster = false,
     }
 
     -- Game state
@@ -233,7 +234,10 @@ function game.processSpecialTile(data)
         end,
 
         [56] = function()
-            game.addEntity(Blaster { x=x, y=y })
+            if not game.flags.got_blaster then
+                game.addEntity(Blaster { x=x, y=y })
+                game.flags.got_blaster = true
+            end
         end,
 
 
@@ -397,8 +401,7 @@ function game.useChamber()
             -- TODO: Error sound
             game.showWindow("You need 10 DNA modules to be able to use this incubation chamber.")
         end
-
-    -- end
+    end
 
 
     -- Show on first usage in game
@@ -670,7 +673,7 @@ function game:keypressed(key, unicode)
         end
         -- Reset game
         if key == 'f6' then
-            game.loadArea('base')
+            game.loadArea(game.area.name)
         end
     end
 

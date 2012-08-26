@@ -47,8 +47,8 @@ end
 -- Get a scaled stat
 local stat_scales = {
     speed = 4,
-    vision = 11,
-    vitality = 3,
+    vision = 12,
+    vitality = 4,
     focus = 1 / 6,
 }
 function Player:stat(stat)

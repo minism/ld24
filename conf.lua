@@ -27,7 +27,7 @@ end
 -- Global game config
 config = {
 	debug = true,
-	start_area = 'start',
+	start_area = 'hub',
 	music = true,
 
 
@@ -39,6 +39,6 @@ config = {
 
 
 	max_stat = 35,
-	starting_stat = 30,
+	starting_stat = 35,
 
 }
