@@ -1,5 +1,5 @@
 local ui = {
-    height = 80
+    height = 90
 }
 
 function ui.drawBox(left, top, width, height)
@@ -27,6 +27,11 @@ function ui.drawBar(left, top, width, amount)
 end
 
 
+function rprint(text, x, y, w)
+    love.graphics.printf(text, x, y, w, 'right')
+end
+
+
 function ui.draw()
     -- Draw main UI
     love.graphics.setFont(assets.font.ui)
@@ -34,31 +39,50 @@ function ui.draw()
     local right, bottom = love.graphics.getWidth(), love.graphics.getHeight()
     local center_x = (right - left) / 2
     local box_width, box_height = 300, bottom - top
-    local padding = 12
-    local line_spacing = 30
+    local padding = 8
+    local line_spacing = 20
     local col_spacing = 100
     local box1 = {left, top, box_width, box_height}
     local box2 = {center_x - box_width /2, top, box_width, box_height}
     local box3 = {right - box_width, top, box_width, box_height}
 
     -- Draw player state
+    local player = game.player
     ui.drawBox(unpack(box1))
         color.ui_font()
-        love.graphics.print("WEAPON", box1[1] + padding, box1[2] + padding)
-        love.graphics.print("HEALTH", box1[1] + padding, box1[2] + padding + line_spacing)
+        rprint("WEAPON:", box1[1], box1[2] + padding, col_spacing - 5)
+        rprint("HEALTH:", box1[1], box1[2] + padding + line_spacing, col_spacing - 5)
 
-        -- Draw health
         color.ui_font2()
-        local weapon_name = game.player.state.weapon.name
+        local weapon_name = player.state.weapon.name
         love.graphics.print(weapon_name, box1[1] + padding + col_spacing, box1[2] + padding)
-        local health_percent = game.player.state.health / game.player:stat('vitality')
+        local health_percent = player.state.health / player:stat('vitality')
         ui.drawBar(box1[1] + padding + col_spacing, box1[2] + padding + line_spacing, 120, health_percent)
 
     -- Draw game state
     ui.drawBox(unpack(box2))
+        color.ui_font()
+        local bx, by = box2[1], box2[2]
+        rprint("SUBJECTS LEFT:", bx, by + padding, col_spacing + 80)
+        rprint("DNA MODULES:", bx, by + padding + line_spacing, col_spacing + 80)
+
+        color.ui_font2()
+        love.graphics.print(game.state.subjects, bx + col_spacing + 90, by + padding)
+        love.graphics.print(game.state.modules, bx + col_spacing + 90, by + padding + line_spacing)
 
     -- Draw player stats
     ui.drawBox(unpack(box3))
+        color.ui_font()
+        local bx, by = box3[1], box3[2]
+        rprint("SPEED:", bx + padding,      by + padding + line_spacing * 0, col_spacing + 10)
+        rprint("FOCUS:", bx + padding,      by + padding + line_spacing * 1, col_spacing + 10)
+        rprint("VISION:", bx + padding,     by + padding + line_spacing * 2, col_spacing + 10)
+        rprint("VITALITY:", bx + padding,   by + padding + line_spacing * 3, col_spacing + 10)
+
+        ui.drawBar(bx + padding + col_spacing + 20, by + padding + line_spacing * 0, 100, player.stats.speed / 30)
+        ui.drawBar(bx + padding + col_spacing + 20, by + padding + line_spacing * 1, 100, player.stats.focus / 30)
+        ui.drawBar(bx + padding + col_spacing + 20, by + padding + line_spacing * 2, 100, player.stats.vision / 30)
+        ui.drawBar(bx + padding + col_spacing + 20, by + padding + line_spacing * 3, 100, player.stats.vitality / 30)
 
 end
 

@@ -12,9 +12,9 @@ function Player:init(conf)
 
     self.stats = {
         speed = 10,
+        focus = 10,
         vision = 10,
-        vitality = 10,
-        spatial = 10,
+        vitality = 20,
     }
 
     self.sprite = MultiSprite {
@@ -62,7 +62,7 @@ function Player:processInput()
 end
 
 function Player:getAttackTime()
-    return self:stat('spatial') / 20
+    return self:stat('focus') / 20
 end
 
 -- Attack on a vector with current weapon

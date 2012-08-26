@@ -39,6 +39,12 @@ function game.setup()
 
     }
 
+    -- Game state
+    game.state = {
+        subjects = 100,
+        modules = 0,
+    }
+
     -- Test
     game.loadArea('test')
 end
@@ -117,7 +123,7 @@ function game:draw()
     ui.draw()
 
     -- Draw debug stuff
-    if config.debug then
+    if config.debug and config.show_console then
         console:drawLog()
         love.graphics.print(love.timer.getFPS(), love.graphics.getWidth() - 50, 0)
     end
@@ -183,6 +189,10 @@ function game:keypressed(key, unicode)
         -- Toggle blindness
         if key == 'f4' then
             config.blind = not config.blind
+        end
+        -- Toggle blindness
+        if key == 'f5' then
+            config.show_console = not config.show_console
         end
     end
 end
