@@ -17,7 +17,7 @@ end
 function TileEntity:drawLocal()
     sx = self.conf.left and 1 or -1
     x = self.conf.left and 0 or self.w
-    self.sprite:draw(x, 0, 0, sx, 1)
+    if self.sprite then self.sprite:draw(x, 0, 0, sx, 1) end
 end
 
 
@@ -102,3 +102,14 @@ function Subject:update(dt)
     end
 end
 
+
+
+Light = TileEntity:extend()
+
+function Light:init(conf)
+    local conf = extend({
+        xofs = -1,
+        yofs = 0,
+    }, conf or {})
+    TileEntity.init(self, conf)
+end

@@ -120,9 +120,14 @@ function Player:update(dt)
     -- Successful move if floor exists
     if game.area:floorAtWorld(next_x, self.y) then
         self.x = next_x
+    else
+        game.checkPlayerWallEvent(next_x, self.y)
     end
+
     if game.area:floorAtWorld(self.x, next_y) then
         self.y = next_y
+    else
+        game.checkPlayerWallEvent(self.x, next_y)
     end
 
 

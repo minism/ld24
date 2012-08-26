@@ -41,6 +41,8 @@ function game.setup()
     -- Persistent flags
     game.flags = {
         first_chamber = true,
+        first_lights = true,
+        first_subject = true,
     }
 
     -- Game state
@@ -70,6 +72,8 @@ function game.setup()
         assets.music.music:play()
     end
 
+    -- Start dialog
+
 
     -- Load first area
     game.loadArea(config.start_area)
@@ -88,10 +92,49 @@ function game.respawn()
     game.gotoArea(game.state.save.area)
 end
 
+function game.toggleLights()
+    -- Show on first usage in game
+    if game.flags.first_lights then
+        game.flags.first_lights = false
+        game.showWindow("Light switches like these can be used to turn on and off all of the lights in a room")
+    end
+    game.area.flags.lights = not game.area.flags.lights 
+    --play
+end
+
+function game.releaseSubject(subject)
+    -- Show on first usage in game
+    if game.flags.first_subject then
+        game.flags.first_subject = false
+        game.showWindow("Thank you so much for releasing me!  We have to find the others.")
+    end
+    game.state.subjects = game.state.subjects - 1
+    subject.state = false
+    --play
+end
+
+
+function game.checkPlayerWallEvent(px, py)
+    local tx, ty = Area.worldToTile(px, py)
+    if not game.wall_consume then
+        game.wall_consume = true
+        for i, entity in ipairs(game.entities) do
+            local x, y = Area.worldToTile(entity.x, entity.y)
+            if x + entity.xofs == tx and y + entity.yofs == ty then
+                if isinstance(entity, Light) then
+                    game.toggleLights()
+                end
+            end
+        end
+    end
+end
+
+
 
 -- Player entered a tile, do anything necessary
 function game.checkPlayerTileEvent(px, py)
     local tx, ty = Area.worldToTile(px, py)
+    game.wall_consume = false
 
     -- Check for area logic tiles
     local tile = game.area:logicTileAtWorld(px, py)
@@ -113,8 +156,7 @@ function game.checkPlayerTileEvent(px, py)
         local x, y = Area.worldToTile(entity.x, entity.y)
         if x + entity.xofs == tx and y + entity.yofs == ty then
             if isinstance(entity, Subject) then
-                game.state.subjects = game.state.subjects - 1
-                entity.state = false
+                game.releaseSubject(entity)
             end
         end
     end
@@ -177,8 +219,12 @@ function game.processSpecialTile(data)
         [57] = function()
             game.area.chamber = Chamber {x = x, y = y, used = game.area.flags.used_chamber}
             game.addEntity(game.area.chamber)
-        end
+        end,
 
+
+        [49] = function()
+            game.addEntity( Light { x=x, y=y})
+        end,
 
     }
     if handlers[id] then handlers[id]() end
