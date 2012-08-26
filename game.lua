@@ -402,7 +402,7 @@ function game:draw()
         if config.iso == true then iso.applyMatrix() end
 
             -- Draw blindness
-            if config.blind then love.graphics.setStencil(game.blindnessStencil) end
+            if config.blind and not game.area.flags.lights then love.graphics.setStencil(game.blindnessStencil) end
 
             -- Draw area and entities
             game.drawScene()
@@ -433,17 +433,19 @@ end
 
 -- Draw blindness circles around a point
 function game:drawBlindness()
-    local x, y, rad = game.player.x, game.player.y, game.player:stat('vision')
-    color.black(192)
-    love.graphics.circle('fill', x, y, rad, rad)
-    love.graphics.setBlendMode('multiplicative')
-    color.white(150)
-    for i=1,2 do
-        love.graphics.circle('fill', x, y, rad * i / 3)
-        love.graphics.circle('fill', x, y, rad * i / 3)
+    if not game.area.flags.lights then
+        local x, y, rad = game.player.x, game.player.y, game.player:stat('vision')
+        color.black(192)
+        love.graphics.circle('fill', x, y, rad, rad)
+        love.graphics.setBlendMode('multiplicative')
+        color.white(150)
+        for i=1,2 do
+            love.graphics.circle('fill', x, y, rad * i / 3)
+            love.graphics.circle('fill', x, y, rad * i / 3)
+        end
+        love.graphics.setBlendMode('alpha')
+        color.white()
     end
-    love.graphics.setBlendMode('alpha')
-    color.white()
 end
 
 function game.flushEntityQueue()

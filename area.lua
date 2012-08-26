@@ -43,7 +43,7 @@ function Area:init(areaname)
 
     -- Persistent flags
     self.flags = {
-        lights = false,
+        lights = true,
         used_chamber = false,
     }
 end
