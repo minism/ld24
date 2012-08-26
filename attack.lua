@@ -13,6 +13,9 @@ function Attack:init(conf)
 end
 
 function Attack:drawLocal()
+    if self.hit == "e_attack" then
+        color.enemy_attack()
+    end
     self.sprite:draw(2, 2)
 end
 

@@ -56,6 +56,17 @@ function Humanoid:updateSpriteMode(velx, vely)
     end
 end
 
+function Humanoid:getHit(attack_entity)
+    audio.play('hit')
+    self.state.health = self.state.health - attack_entity.damage
+    if self.state.health <= 0 then
+        self:die()
+    else
+        self.overlay = {196, 128, 128}
+        time:after(0.1, function() self.overlay = nil end)
+    end
+end
+
 
 
 Enemy = Humanoid:extend()
@@ -77,17 +88,6 @@ function Enemy:die()
     Entity.die(self)
 end
 
-
-function Enemy:getHit(attack_entity)
-    audio.play('hit')
-    self.state.health = self.state.health - attack_entity.damage
-    if self.state.health <= 0 then
-        self:die()
-    else
-        self.overlay = {196, 128, 128}
-        time:after(0.1, function() self.overlay = nil end)
-    end
-end
 
 function Enemy:decide()
     self.vec_px, self.vec_py, self.cost = game.area:findPathVector(self.x, self.y)

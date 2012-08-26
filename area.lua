@@ -1,5 +1,14 @@
 require 'lib.astar.astar'
 
+-- Caches area objects
+area_manager = {
+    areas = {},
+    get = function(areaname)
+        return area_manager.areas[areaname] or Area(areaname)
+    end
+}
+
+
 Area = leaf.Object:extend()
 
 local WORLD_TILESIZE = 32 / math.sqrt(2)
@@ -37,6 +46,10 @@ function Area:init(areaname)
         lights = false,
         used_chamber = false,
     }
+end
+
+function Area:destroy()
+    -- Unload anything we dont want to keep anymore
 end
 
 

@@ -47,6 +47,9 @@ function game.setup()
     game.state = {
         subjects = 100,
         modules = 0,
+        save = {
+            area = config.start_area,
+        }
     }
 
     -- Extra timers
@@ -54,6 +57,7 @@ function game.setup()
         fade_screen = 0,
         init_fade = INIT_FADE_TIME,  --start fading in
     }
+    game.pending_x, game.pending_y = nil, nil
     game.pending_load = nil
 
     -- Screen overlay
@@ -69,6 +73,19 @@ function game.setup()
 
     -- Load first area
     game.loadArea(config.start_area)
+end
+
+-- Check for major changes
+function game.checkMajorState()
+    -- Player dead?
+    if game.player.state.health < 0 then
+        game.respawn()
+    end
+end
+
+function game.respawn()
+    game.player.state.health = game.player:stat('vitality')
+    game.gotoArea(game.state.save.area)
 end
 
 
@@ -165,7 +182,7 @@ function game.destroyEntities()
 end
 
 
-function game.loadArea(areaname)
+function game.loadArea(areaname, force_x, force_y)
     local lastarea_name = nil
     if game.area and game.area.name then
         lastarea_name = game.area.name
@@ -176,9 +193,10 @@ function game.loadArea(areaname)
     game.destroyEntities()
     game.entities = {}
     game._entity_queue = {}
+    if game.area then game.area:destroy() end
 
     -- Load area data
-    game.area = Area(areaname)
+    game.area = area_manager.get(areaname)
     game.area:load()
     
     -- Prepare the render index
@@ -198,13 +216,20 @@ function game.loadArea(areaname)
             game.player.y = y
         end
     end
+
+
+    -- Forcibly position player
+    if force_x and force_y then
+        game.player.x, game.player.y = force_x, force_y
+    end
 end
 
 
 -- Go to an area from a connecting tile
-function game.gotoArea(areaname)
+function game.gotoArea(areaname, x, y)
     audio.play('area')
     game.pending_load = areaname
+    game.pending_x, game.pending_y = x, y
     game.timers.fade_screen = AREA_FADE_TIME
 end
 
@@ -216,7 +241,7 @@ function game.handleTimers()
         if game.pending_load then alpha = 1.0 - alpha end
         game.overlay[4] = alpha
     elseif game.pending_load then
-        game.loadArea(game.pending_load)
+        game.loadArea(game.pending_load, game.pending_x, game.pending_y)
         game.pending_load = nil
         game.timers.fade_screen = AREA_FADE_TIME
     end
@@ -239,6 +264,15 @@ function game.useChamber()
         -- Show chamber window
         local chamber_win = ChamberWindow(function(success)
             if success == true then
+                -- Restore health
+                game.player.state.health = game.player:stat('vitality')
+
+                -- Save for death
+                game.state.save.area = game.area.name
+                game.state.save.x = game.area.chamber.x
+                game.state.save.y = game.area.chamber.y
+
+                -- Mark as used
                 game.area.chamber.used = true
                 game.area.flags.used_chamber = true
             end
@@ -420,6 +454,9 @@ function game.flushEntityQueue()
 end
 
 function game:update(dt)
+    -- Check major state
+    game:checkMajorState()
+
     -- Update global time manager
     time:update(dt)
 
@@ -440,30 +477,41 @@ function game:update(dt)
         if entity ~= nil then 
             entity:update(dt)
 
-            -- Check for collisions
-            if entity.hit == "p_attack" and not entity.dead then
-                for i, entity2 in ipairs(game.entities) do
-                    if entity2.hit == "enemy" then
-                        local a, b, c, d = entity:getCollisionRect()
-                        local e, f, g, h = entity2:getCollisionRect()
-                        if rect_intersects(a,b,c,d,e,f,g,h) then
-                            entity2:getHit(entity)
-                            entity.dead = true
+            if not entity.dead then 
+                -- Check for collisions
+                if entity.hit == "p_attack" then
+                    for i, entity2 in ipairs(game.entities) do
+                        if entity2.hit == "enemy" then
+                            local a, b, c, d = entity:getCollisionRect()
+                            local e, f, g, h = entity2:getCollisionRect()
+                            if rect_intersects(a,b,c,d,e,f,g,h) then
+                                entity2:getHit(entity)
+                                entity:die()
+                            end
                         end
                     end
                 end
-            end
 
-            -- Check player collisions
+                -- Check player collisions
 
-            -- Module pickup
-            if entity.hit == "module" and not entity.dead then
-                local a,b,c,d = entity:getCollisionRect()
-                local e,f,g,h = game.player:getCollisionRect()
-                if rect_intersects(a,b,c,d,e,f,g,h) then
-                    audio.play('pickup')
-                    entity:die()
-                    game.state.modules = game.state.modules + 1
+                -- Module pickup
+                if entity.hit == "module" then
+                    local a,b,c,d = entity:getCollisionRect()
+                    local e,f,g,h = game.player:getCollisionRect()
+                    if rect_intersects(a,b,c,d,e,f,g,h) then
+                        audio.play('pickup')
+                        entity:die()
+                        game.state.modules = game.state.modules + 1
+                    end
+                end
+
+                if entity.hit == "e_attack" then
+                    local a,b,c,d = entity:getCollisionRect()
+                    local e,f,g,h = game.player:getCollisionRect()
+                    if rect_intersects(a,b,c,d,e,f,g,h) then
+                        entity:die()
+                        game.player:getHit(entity)
+                    end
                 end
             end
 
