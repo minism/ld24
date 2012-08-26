@@ -237,6 +237,7 @@ function game.drawScene()
     -- Clear render index from last frame
     game.clearRenderIndex()
 
+
     -- Index all entities by position
     for i, entity in ipairs(game.entities) do
         local tile_index = game.area:getTileIndexFromWorld(entity.x, entity.y)
@@ -250,13 +251,31 @@ function game.drawScene()
     local quads = tilehelper.quads.main
     local tileset_image = assets.tilesets.main
 
+    -- Draw floor first
+    local spritebatch = tilehelper.spritebatch.main
+    spritebatch:clear()
+    local floor = game.area:getLayer('floor')
+    for x=1, game.area.data.width do
+        for y=1, game.area.data.height do
+            local index = game.area:getTileIndex(x, y)
+            local tile_id = floor.data[index]
+            if tile_id and tile_id > 0 then
+                -- Add tile's quad to spritebatch, transformed to ortho projection
+                spritebatch:addq(quads[tile_id], iso.toOrtho(Area.tileToWorld(x - 1.5, y - 0.5)))
+            end
+        end
+    end
+    love.graphics.draw(spritebatch)
+
+
+
     -- Draw everything on a tile one at a time
     for x=1, game.area.data.width do
         for y=1, game.area.data.height do
             -- Process tiles onto sprite batch
             for i, layer in ipairs(game.area.data.layers) do
-                -- Dont draw special tiles
-                if layer.name ~= 'sp' and layer.type == 'tilelayer' then
+                -- Dont draw special tiles or floor
+                if layer.name ~= 'sp' and layer.name ~= 'floor' and layer.type == 'tilelayer' then
                     local index = game.area:getTileIndex(x, y)
                     local tile_id = layer.data[index]
                     if tile_id and tile_id > 0 then

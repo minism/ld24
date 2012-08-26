@@ -1,6 +1,6 @@
 local tilehelper = {
     quads = {},
-    -- spritebatch = {},
+    spritebatch = {},
 }
 
 local MAX_SPRITES = 1000
@@ -12,7 +12,7 @@ function tilehelper.load()
         console:write("Built tile quads for " .. name)
 
         -- Build spritebatch
-        -- tilehelper.spritebatch[name] = love.graphics.newSpriteBatch(image)
+        tilehelper.spritebatch[name] = love.graphics.newSpriteBatch(image)
     end
 end
 
