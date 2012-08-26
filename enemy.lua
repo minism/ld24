@@ -1,5 +1,6 @@
 require 'entity'
 require 'item'
+require 'objects'
 
 
 Humanoid = Entity:extend()
@@ -15,6 +16,12 @@ function Humanoid:init(conf)
     self.state = {
         health = self.conf.health
     }
+end
+
+function Humanoid:die()
+    audio.play('kill')
+    game.addEntity(Explosion { x = self.x, y = self.y })
+    Entity.die(self)
 end
 
 function Humanoid:drawLocal()
@@ -73,6 +80,7 @@ Enemy = Humanoid:extend()
 
 function Enemy:init(conf)
     local conf = extend({
+        damage = 10,
         speed = 20,
         hit = "enemy",
     }, conf or {})
@@ -83,11 +91,6 @@ function Enemy:init(conf)
     self.ai_state = 'idle'
     self.ai_timer = 0
     self.cost, self.vec_px, self.vec_py = 0, 0, 0
-end
-
-function Enemy:die()
-    audio.play('kill')
-    Entity.die(self)
 end
 
 
@@ -173,6 +176,7 @@ Scientist = Enemy:extend()
 
 function Scientist:init(conf)
     local conf = extend({
+        damage = 0,
         speed = 30,
     }, conf or {})
     Enemy.init(self, conf)

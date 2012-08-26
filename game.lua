@@ -50,11 +50,14 @@ function game.setup()
     }
 
     -- Game state
+    local tx, ty = Area.tileToWorld(7, 14)
     game.state = {
         subjects = 25,
         modules = 10,
         save = {
             area = config.start_area,
+            x = tx,
+            y = ty,
         }
     }
 
@@ -62,6 +65,7 @@ function game.setup()
     game.timers = {
         fade_screen = 0,
         init_fade = INIT_FADE_TIME,  --start fading in
+        enemy_collide = 0,
     }
     game.pending_x, game.pending_y = nil, nil
     game.pending_load = nil
@@ -104,7 +108,7 @@ function game.toggleLights()
         game.showWindow("Light switches like these can be used to turn on and off all of the lights in a room")
     end
     game.area.flags.lights = not game.area.flags.lights 
-    --play
+    audio.play('lights')
 end
 
 function game.releaseSubject(subject)
@@ -117,7 +121,7 @@ function game.releaseSubject(subject)
         game.state.subjects = game.state.subjects - 1
         subject.state = false
     end
-    --play
+    audio.play('thanks')
 end
 
 
@@ -641,6 +645,15 @@ function game:update(dt)
                     local e,f,g,h = game.player:getCollisionRect()
                     if rect_intersects(a,b,c,d,e,f,g,h) then
                         entity:die()
+                        game.player:getHit(entity)
+                    end
+                end
+
+                if entity.hit == "enemy" and entity.damage > 0 and game.timers.enemy_collide < 0 then
+                    local a,b,c,d = entity:getCollisionRect()
+                    local e,f,g,h = game.player:getCollisionRect()
+                    if rect_intersects(a,b,c,d,e,f,g,h) then
+                        game.timers.enemy_collide = 1
                         game.player:getHit(entity)
                     end
                 end

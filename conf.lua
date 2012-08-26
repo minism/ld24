@@ -29,7 +29,7 @@ config = {
 	debug = true,
 	start_area = 'start',
 	music = true,
-
+	title = true,
 
 	show_console = false,
 	collision = false,

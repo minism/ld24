@@ -138,3 +138,31 @@ end
 function Blaster:drawLocal()
     self.sprite:draw(12, 12)
 end
+
+
+
+Explosion = TileEntity:extend {
+    
+}
+
+function Explosion:init(conf)
+    local conf = extend({
+        -- xofs = -1,
+        -- yofs = 0,
+    }, conf or {})
+    TileEntity.init(self, conf)
+
+    self.sprite = Sprite {
+        speed = 0.05,
+        image = assets.gfx.explosion,
+        frame_h = 32,
+        frame_w = 32,
+    }
+end
+
+function Explosion:update(dt)
+    TileEntity.update(self, dt)
+    if self.sprite.loops > 0 then
+        self.dead = true
+    end
+end
