@@ -31,7 +31,7 @@ function Bullet:init(conf)
         },
         w = 4,
         h = 4,
-        bound = 3,
+        bound = 6,
         speed = 150,
         damage = 5,
     }, conf or {})
@@ -43,12 +43,14 @@ function Bullet:init(conf)
 end
 
 function Bullet:update(dt)
+    Attack.update(self, dt)
     if vector.length(self.x - self.origin_x, self.y - self.origin_y) > 300 then
         self.dead = true
     end
     self:move(self.velx, self.vely, dt)
+
     -- Die on walls
-    if not game.area:floorAtWorld(self.x, self.y) then
+    if not game.area:floorAtWorld(self.x - self.velx * dt, self.y - self.vely * dt) then
         self.dead = true
     end
 end
