@@ -157,6 +157,8 @@ function ChamberWindow:drawContent()
     else
         love.graphics.printf("SELECT A BODY", left, top, right - left)
 
+
+        love.graphics.setFont(assets.font.ui)
         local box_width = 220
         local box_height = box_width * 1.5
         local box_padding = 0
@@ -227,7 +229,7 @@ end
 
 function Button:init(text)
     self.text = text
-    self.height = 30
+    self.height = 35
 end
 
 function Button:draw(x, y, w, h)

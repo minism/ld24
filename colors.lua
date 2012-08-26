@@ -11,7 +11,7 @@ return ColorPalette {
     ui_border = {40, 40, 50},
     ui_font = {250, 250, 250},
     ui_font2 = {250, 180, 0},
-    ui_bar = {255, 0, 0},
+    ui_bar = {235, 165, 0},
 
 
     -- dialog colors

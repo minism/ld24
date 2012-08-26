@@ -391,7 +391,6 @@ function game.useChamber()
 
         -- Check if enough modules
         if game.state.modules >= CHAMBER_MODULES then
-            game.state.modules = game.state.modules - CHAMBER_MODULES
 
             -- PLay sound
             audio.play('chamber')
@@ -399,6 +398,9 @@ function game.useChamber()
             -- Show chamber window
             local chamber_win = ChamberWindow(function(success)
                 if success == true then
+                    -- consume modules
+                    game.state.modules = game.state.modules - CHAMBER_MODULES
+
                     -- Restore health
                     game.player.state.health = game.player:stat('vitality')
 
