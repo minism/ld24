@@ -267,8 +267,6 @@ function game.drawScene()
     end
     love.graphics.draw(spritebatch)
 
-
-
     -- Draw everything on a tile one at a time
     for x=1, game.area.data.width do
         for y=1, game.area.data.height do

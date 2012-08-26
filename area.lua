@@ -157,7 +157,7 @@ function Area:getLayer(layername)
             return tilelayer
         end
     end
-    return {}
+    return nil
 end
 
 -- Return a unique ID for a tile, used for sorting
