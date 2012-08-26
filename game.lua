@@ -192,8 +192,10 @@ function game.processSpecialTile(data)
     local id, x, y = data.id, data.x, data.y
     local handlers = {
         [63] = function()
-            game.player.x = x
-            game.player.y = y
+            if game.area.name == 'start' then
+                game.player.x = x
+                game.player.y = y
+            end
         end,
 
         [62] = function()
@@ -303,17 +305,17 @@ function game.loadArea(areaname, force_x, force_y)
         game._render_index[i] = {}
     end
 
-    -- React to any sp tile init data
-    if game.area.init then
-        for i, spdata in ipairs(game.area.sp_init) do game.processSpecialTile(spdata) end
-        game.area.init = false
-    end
-
     -- Position player based on matching connecting tile, if exists
     local x, y = game.area:getConnectionWorldPosition(lastarea_name)
     if x and y then
         game.player.x = x
         game.player.y = y
+    end
+
+    -- React to any sp tile init data
+    if game.area.init then
+        for i, spdata in ipairs(game.area.sp_init) do game.processSpecialTile(spdata) end
+        game.area.init = false
     end
 
     -- Forcibly position player
