@@ -125,9 +125,14 @@ end
 -- Get the world position of a conneciton tile based on name
 function Area:getConnectionWorldPosition(areaname)
     for i, tile in ipairs(self.logic_tiles) do
-        if tile.type == 'connection' and tile.area == areaname then
-            local wx, wy = self.tileToWorld(tile.x, tile.y)
-            return wx + WORLD_TILESIZE / 2, wy + WORLD_TILESIZE / 2
+        if tile.type == 'connection' then
+            if not areaname then
+                local wx, wy = self.tileToWorld(tile.x, tile.y)
+                return wx + WORLD_TILESIZE / 2, wy + WORLD_TILESIZE / 2
+            elseif tile.area == areaname then
+                local wx, wy = self.tileToWorld(tile.x, tile.y)
+                return wx + WORLD_TILESIZE / 2, wy + WORLD_TILESIZE / 2
+            end
         end
     end
     return nil, nil

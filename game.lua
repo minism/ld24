@@ -310,12 +310,10 @@ function game.loadArea(areaname, force_x, force_y)
     end
 
     -- Position player based on matching connecting tile, if exists
-    if lastarea_name then
-        local x, y = game.area:getConnectionWorldPosition(lastarea_name)
-        if x and y then
-            game.player.x = x
-            game.player.y = y
-        end
+    local x, y = game.area:getConnectionWorldPosition(lastarea_name)
+    if x and y then
+        game.player.x = x
+        game.player.y = y
     end
 
     -- Forcibly position player
@@ -384,10 +382,11 @@ function game.useChamber()
                 end
             end)
             app:pushContext(chamber_win)
+        else
+            -- TODO: Error sound
+            game.showWindow("You need 10 DNA modules to be able to use this incubation chamber.")
         end
-    else
-        -- TODO: Error sound
-        game.showWindow("You need 10 DNA modules to be able to use this incubation chamber.")
+
     end
 
 
