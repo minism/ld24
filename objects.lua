@@ -68,3 +68,37 @@ function Chamber:update(dt)
         self.sprite.frame = 1
     end
 end
+
+
+
+Subject = TileEntity:extend {
+    
+}
+
+function Subject:init(conf)
+    local conf = extend({
+        xofs = -1,
+        yofs = 0,
+    }, conf or {})
+    TileEntity.init(self, conf)
+
+    self.sprite = Sprite {
+        speed = 0,
+        image = assets.gfx.subject,
+        frame_h = 32,
+        frame_w = 32,
+    }
+
+    self.state = true
+end
+
+
+function Subject:update(dt)
+    TileEntity.update(dt)
+    if self.state then
+        self.sprite.frame = 1
+    else
+        self.sprite.frame = 2
+    end
+end
+

@@ -45,7 +45,7 @@ function game.setup()
 
     -- Game state
     game.state = {
-        subjects = 100,
+        subjects = 25,
         modules = 0,
         save = {
             area = config.start_area,
@@ -108,6 +108,17 @@ function game.checkPlayerTileEvent(px, py)
             game.useChamber()
         end
     end
+
+    for i, entity in ipairs(game.entities) do
+        local x, y = Area.worldToTile(entity.x, entity.y)
+        if x + entity.xofs == tx and y + entity.yofs == ty then
+            if isinstance(entity, Subject) then
+                game.state.subjects = game.state.subjects - 1
+                entity.state = false
+            end
+        end
+    end
+
 end
 
 function game.checkPlayerPositionEvent(px, py)
@@ -147,8 +158,9 @@ function game.processSpecialTile(data)
             game.addEntity(Scientist { x=x, y=y })
         end,
 
-        -- [60] = function()
-            -- game.
+        [60] = function()
+            game.addEntity(Subject { x=x, y=y})
+        end,
 
         [58] = function()
             local door = Door {x=x, y=y}

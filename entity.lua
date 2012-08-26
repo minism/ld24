@@ -10,6 +10,8 @@ function Entity:init(conf)
         bound = 12,
         hit = "none",
         damage = 0,
+        xofs=0,
+        yofs=0,
     }, conf or {})
 
     -- Cleanup state
@@ -25,7 +27,9 @@ function Entity:init(conf)
     self.y = self.conf.y
     self.w = self.conf.w
     self.h = self.conf.h
-    self.speed = self.conf.speed 
+    self.speed = self.conf.speed
+
+    self.xofs, self.yofs = self.conf.xofs, self.conf.yofs
 end
 
 function Entity:update(dt) end
