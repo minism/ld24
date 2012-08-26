@@ -4,13 +4,27 @@ Area = leaf.Object:extend()
 
 local WORLD_TILESIZE = 32 / math.sqrt(2)
 
+-- Logical tile
+local LogicTile = leaf.Object:extend()
+
+function LogicTile:init(conf)
+    _.extend(self, conf or {})
+    assert(self.x and self.y and self.type, "Logic tile was missing property")
+end
+
+
 -- Define areas with corresponding area file
-function Area:init(area_name)
+function Area:init(areaname)
+    self.name = areaname
+
     -- Parse area map file
-    self.data = assets.areas[area_name]()
+    self.data = assets.areas[areaname]()
 
     -- For specific layers
     self.tilelayers = {}
+
+    -- Logical tiles
+    self.logic_tiles = {}
 
     -- For sp init data
     self.sp_init = {}
@@ -18,28 +32,46 @@ function Area:init(area_name)
     -- Persistent flags
     self.flags = {
     
-  }
+    }
 end
 
 
 -- Given a row, col index for a tile, return world coords
-function tileToWorld(row, col)
+function Area.tileToWorld(row, col)
     return row * WORLD_TILESIZE, col * WORLD_TILESIZE
 end
 
 -- Given a world coord, return row, col index for a tile
-function worldToTile(x, y)
+function Area.worldToTile(x, y)
     return math.floor(x / WORLD_TILESIZE), math.floor(y / WORLD_TILESIZE)
+end
+
+-- Returns a logic tile at world, if exists
+function Area:logicTileAtWorld(world_x, world_y)
+    local tx, ty = self.worldToTile(world_x, world_y)
+    return self:logicTileAt(tx, ty)
+end
+
+-- Returns a logic tile at an index, if exists
+function Area:logicTileAt(row, col)
+    if row >= 1 and col >= 1 and row <= self.data.width and col <= self.data.height then
+        for i, tile in ipairs(self.logic_tiles) do
+            if tile.x == row and tile.y == col then
+                return tile
+            end
+        end
+    end
+    return nil
 end
 
 
 -- Determins if floor is at a world coord
 function Area:floorAtWorld(world_x, world_y)
-    local tx, ty = worldToTile(world_x, world_y)
+    local tx, ty = self.worldToTile(world_x, world_y)
     return self:floorAt(tx, ty)
 end
 
--- Determines if floor is at a row, col
+-- Determines if floor is at an index
 function Area:floorAt(row, col)
     if row < 1 or col < 1 or row > self.data.width or col > self.data.height then
         return false
@@ -48,6 +80,19 @@ function Area:floorAt(row, col)
     return self.tilelayers.floor.data[index] > 0
 end
 
+
+-- Get the world position of a conneciton tile based on name
+function Area:getConnectionWorldPosition(areaname)
+    for i, tile in ipairs(self.logic_tiles) do
+        if tile.type == 'connection' and tile.area == areaname then
+            local wx, wy = self.tileToWorld(tile.x, tile.y)
+            return wx + WORLD_TILESIZE / 2, wy + WORLD_TILESIZE / 2
+        end
+    end
+    return nil, nil
+end
+
+
 -- Process area data and load anything necessary
 function Area:load()
     -- Cache floor and special layers
@@ -55,7 +100,7 @@ function Area:load()
     self.tilelayers.sp = self:getLayer('sp')
     assert(self.tilelayers.floor.width, "No floor layer")
 
-    -- Process special tiles
+    -- Process special initializer tiles
     self.sp_init = {}
     local layer = self.tilelayers.sp
     if layer then
@@ -63,13 +108,27 @@ function Area:load()
             for y=1, layer.height do
                 local index = x + (y - 1) * layer.height
                 local tile_id = layer.data[index]
-                local wx, wy = tileToWorld(x, y)
+                local wx, wy = self.tileToWorld(x, y)
                 table.insert(self.sp_init, {
                     id = tile_id,
                     x = wx + WORLD_TILESIZE / 2,
                     y = wy + WORLD_TILESIZE / 2,
                 })
             end
+        end
+    end
+
+    -- Process connections in map
+    local connection_layer = self:getLayer('connections')
+    if connection_layer then
+        for i, connection in ipairs(connection_layer.objects) do
+            local tile = LogicTile {
+                x = math.floor(connection.x / 16),
+                y = math.floor(connection.y / 16),
+                type = 'connection',
+                area = connection.name,
+            }
+            table.insert(self.logic_tiles, tile)
         end
     end
 
@@ -93,14 +152,14 @@ function Area:drawTiles()
     -- Process tiles onto sprite batch
     for i, layer in ipairs(self.data.layers) do
         -- Dont draw special tiles
-        if layer.name ~= 'sp' then
+        if layer.name ~= 'sp' and layer.type == 'tilelayer' then
             for x=1, layer.width do
                 for y=1, layer.height do
                     local index = x + (y - 1) * layer.height
                     local tile_id = layer.data[index]
                     if tile_id and tile_id > 0 then
                         -- Add tile's quad to spritebatch, transformed to ortho projection
-                        spritebatch:addq(quads[tile_id], iso.toOrtho(tileToWorld(x - 1.5, y - 0.5)))
+                        spritebatch:addq(quads[tile_id], iso.toOrtho(self.tileToWorld(x - 1.5, y - 0.5)))
                     end
                 end
             end
@@ -129,13 +188,13 @@ end
 -- Given x, y in world coordinates, find an appropriate velocity vector
 -- to the player based on A*
 function Area:findPathVector(world_x, world_y, cost)
-    local src = vector.new(worldToTile(world_x, world_y))
-    local dst = vector.new(worldToTile(game.player.x, game.player.y))
+    local src = vector.new(self.worldToTile(world_x, world_y))
+    local dst = vector.new(self.worldToTile(game.player.x, game.player.y))
     local path = self.astar:findPath(src, dst)
     if path then
         local first_node = path:getNodes()[1]
         if first_node then
-            local tile_worldx, tile_worldy = tileToWorld(first_node.location.x, first_node.location.y)
+            local tile_worldx, tile_worldy = self.tileToWorld(first_node.location.x, first_node.location.y)
             tile_worldx = tile_worldx + WORLD_TILESIZE / 2
             tile_worldy = tile_worldy + WORLD_TILESIZE / 2
             return tile_worldx - world_x, tile_worldy - world_y, path:getTotalMoveCost()

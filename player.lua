@@ -87,6 +87,9 @@ function Player:attack(x, y)
 end
 
 function Player:update(dt)
+    -- Store last tile position
+    local last_tx, last_ty = Area.worldToTile(self.x, self.y)
+
     -- Update internal time handler
     self.time:update(dt)
 
@@ -119,6 +122,18 @@ function Player:update(dt)
     end
     if game.area:floorAtWorld(self.x, next_y) then
         self.y = next_y
+    end
+
+
+    -- If we moved tiles, check for logical tiles on map
+    local tx, ty = Area.worldToTile(self.x, self.y)
+    if last_tx ~= tx or last_ty ~= ty then
+        local tile = game.area:logicTileAtWorld(self.x, self.y)
+        if tile then
+            if tile.type == "connection" then 
+                game.gotoArea(tile.area)
+            end
+        end
     end
 end
 

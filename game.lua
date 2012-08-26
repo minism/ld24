@@ -4,8 +4,6 @@ require 'enemy'
 require 'item'
 
 local game = {}
-game.entities = {}
-game._entity_queue = {}
 
 
 function game.setup()
@@ -72,8 +70,14 @@ end
 
 
 function game.loadArea(areaname)
+    local lastarea_name = nil
+    if game.area and game.area.name then
+        lastarea_name = game.area.name
+    end
+
     -- Dump previous data
     game.entities = {}
+    game._entity_queue = {}
 
     -- Load area data
     game.area = Area(areaname)
@@ -81,6 +85,21 @@ function game.loadArea(areaname)
 
     -- React to any sp tile init data
     for i, spdata in ipairs(game.area.sp_init) do game.processSpecialTile(spdata) end
+
+    -- Position player based on matching connecting tile, if exists
+    if lastarea_name then
+        local x, y = game.area:getConnectionWorldPosition(lastarea_name)
+        if x and y then
+            game.player.x = x
+            game.player.y = y
+        end
+    end
+end
+
+
+-- Go to an area from a connecting tile
+function game.gotoArea(areaname)
+    game.loadArea(areaname)
 end
 
 
