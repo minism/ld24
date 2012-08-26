@@ -105,6 +105,9 @@ function Area:floorAt(row, col)
 end
 
 function Area:halfAt(row, col)
+    if not self.tilelayers.half then
+        return false
+    end
     if row < 1 or col < 1 or row > self.data.width or col > self.data.height then
         return false
     end

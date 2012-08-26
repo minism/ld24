@@ -82,6 +82,7 @@ function Enemy:init(conf)
     self.decide_rate = 1 / 20
     self.ai_state = 'idle'
     self.ai_timer = 0
+    self.cost, self.vec_px, self.vec_py = 0, 0, 0
 end
 
 function Enemy:die()
@@ -140,25 +141,28 @@ end
 
 function Guard:decide()
     Enemy.decide(self)
-    if self.cost < 10 then
-        self.ai_state = 'move_player'
-    end
 
-    local fire_range = math.random(4, 7)
-    if self.cost <= fire_range then
-        self.ai_state = 'fire'
-        self:updateSpriteMode(self.vec_px, self.vec_py)
-        -- Calculate vector to player, offset  by random amount
-        local miss_amount = 0.5
-        local offset = math.random() * miss_amount - miss_amount / 2 - 0.1
-        local fire_x, fire_y = vector.rotate(game.player.x - self.x, game.player.y - self.y, offset)
-        game.addEntity(Bullet {
-            x = self.x,
-            y = self.y,
-            velx = fire_x,
-            vely = fire_y,
-            hit = "e_attack",
-        })
+    if self.cost then
+        if self.cost < 10 then
+            self.ai_state = 'move_player'
+        end
+
+        local fire_range = math.random(4, 7)
+        if self.cost <= fire_range then
+            self.ai_state = 'fire'
+            self:updateSpriteMode(self.vec_px, self.vec_py)
+            -- Calculate vector to player, offset  by random amount
+            local miss_amount = 0.5
+            local offset = math.random() * miss_amount - miss_amount / 2 - 0.1
+            local fire_x, fire_y = vector.rotate(game.player.x - self.x, game.player.y - self.y, offset)
+            game.addEntity(Bullet {
+                x = self.x,
+                y = self.y,
+                velx = fire_x,
+                vely = fire_y,
+                hit = "e_attack",
+            })
+        end
     end
 end
 
