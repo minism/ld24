@@ -53,11 +53,17 @@ end
 
 
 -- Return a list of quads for each frame of an image
-function leaf.build_quads(image, framewidth, frameheight)
+function leaf.build_quads(image, framewidth, frameheight, x_spacing, y_spacing)
     local quads = {}
+    local x_spacing = x_spacing or 0
+    local y_spacing = y_spacing or 0
     for j=0, math.floor(image:getHeight() / frameheight) - 1 do
         for i=0, math.floor(image:getWidth() / framewidth) - 1 do
-            table.insert(quads, love.graphics.newQuad(i * framewidth, j * frameheight, framewidth, frameheight, image:getWidth(), image:getHeight()))
+            local quad = love.graphics.newQuad(i * framewidth + i * x_spacing,
+                                               j * frameheight + j * y_spacing,
+                                               framewidth, frameheight, 
+                                               image:getWidth(), image:getHeight())
+            table.insert(quads, quad)
         end
     end
     return quads
