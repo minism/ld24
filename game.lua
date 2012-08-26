@@ -48,7 +48,7 @@ function game.setup()
     }
 
     -- Test
-    game.loadArea('test')
+    game.loadArea('base')
 end
 
 
@@ -144,6 +144,12 @@ function game.loadArea(areaname)
     -- Load area data
     game.area = Area(areaname)
     game.area:load()
+    
+    -- Prepare the render index
+    game._render_index = {}
+    for i=1, game.area.data.width * game.area.data.height do
+        game._render_index[i] = {}
+    end
 
     -- React to any sp tile init data
     for i, spdata in ipairs(game.area.sp_init) do game.processSpecialTile(spdata) end
@@ -213,6 +219,63 @@ function game.addEntity(e)
 end
 
 
+function game.updateRenderIndex(index, entity)
+    if game._render_index[index] then
+        table.insert(game._render_index[index], entity)
+    end
+end
+
+function game.clearRenderIndex()
+    for i, table in ipairs(game._render_index) do
+        for k,v in pairs(table) do table[k]=nil end
+    end
+end
+
+
+
+function game.drawScene()
+    -- Clear render index from last frame
+    game.clearRenderIndex()
+
+    -- Index all entities by position
+    for i, entity in ipairs(game.entities) do
+        local tile_index = game.area:getTileIndexFromWorld(entity.x, entity.y)
+        game.updateRenderIndex(tile_index, entity)
+    end
+
+    -- Index player
+    local tile_index = game.area:getTileIndexFromWorld(game.player.x, game.player.y)
+    game.updateRenderIndex(tile_index, game.player)
+
+    local quads = tilehelper.quads.main
+    local tileset_image = assets.tilesets.main
+
+    -- Draw everything on a tile one at a time
+    for x=1, game.area.data.width do
+        for y=1, game.area.data.height do
+            -- Process tiles onto sprite batch
+            for i, layer in ipairs(game.area.data.layers) do
+                -- Dont draw special tiles
+                if layer.name ~= 'sp' and layer.type == 'tilelayer' then
+                    local index = game.area:getTileIndex(x, y)
+                    local tile_id = layer.data[index]
+                    if tile_id and tile_id > 0 then
+                        -- Add tile's quad to spritebatch, transformed to ortho projection
+                        -- spritebatch:addq(quads[tile_id], iso.toOrtho(Area.tileToWorld(x - 1.5, y - 0.5)))
+                        love.graphics.drawq(tileset_image, quads[tile_id], iso.toOrtho(Area.tileToWorld(x - 1.5, y - 0.5)))
+                    end
+
+                    -- Draw any entities in this index
+                    for ei, entity in ipairs(game._render_index[index]) do
+                        entity:draw()
+                    end
+                end
+            end
+        end
+    end
+end
+
+
 function game:draw()
     -- Draw in camera projection
     love.graphics.push()
@@ -225,16 +288,8 @@ function game:draw()
             -- Draw blindness
             if config.blind then love.graphics.setStencil(game.blindnessStencil) end
 
-            -- Draw area
-            game.area:draw()
-
-            -- Draw entities
-            for i, entity in ipairs(game.entities) do
-                entity:draw()
-            end
-
-            -- Draw player
-            game.player:draw()
+            -- Draw area and entities
+            game.drawScene()
 
             -- Draw blindness
             if config.blind then game:drawBlindness() end
@@ -348,6 +403,10 @@ function game:keypressed(key, unicode)
         -- Toggle blindness
         if key == 'f5' then
             config.show_console = not config.show_console
+        end
+        -- Reset game
+        if key == 'f6' then
+            game.loadArea('base')
         end
     end
 end

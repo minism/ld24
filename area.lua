@@ -150,40 +150,6 @@ function Area:load()
 end
 
 
-function Area:draw()
-    self:drawTiles()
-end
-
-
-function Area:drawTiles()
-    local spritebatch = tilehelper.spritebatch.main
-    local quads = tilehelper.quads.main
-
-    -- Clear spritebatch from last frame
-    spritebatch:clear()
-
-    -- Process tiles onto sprite batch
-    for i, layer in ipairs(self.data.layers) do
-        -- Dont draw special tiles
-        if layer.name ~= 'sp' and layer.type == 'tilelayer' then
-            for x=1, layer.width do
-                for y=1, layer.height do
-                    local index = x + (y - 1) * layer.height
-                    local tile_id = layer.data[index]
-                    if tile_id and tile_id > 0 then
-                        -- Add tile's quad to spritebatch, transformed to ortho projection
-                        spritebatch:addq(quads[tile_id], iso.toOrtho(self.tileToWorld(x - 1.5, y - 0.5)))
-                    end
-                end
-            end
-        end
-    end
-
-    -- Render spritebatch
-    love.graphics.draw(spritebatch)
-end
-
-
 -- Return the layer object from Tiled data given name
 function Area:getLayer(layername)
     for i, tilelayer in ipairs(self.data.layers) do
@@ -194,6 +160,14 @@ function Area:getLayer(layername)
     return {}
 end
 
+-- Return a unique ID for a tile, used for sorting
+function Area:getTileIndex(x, y)
+    return x + (y - 1) * self.data.height
+end
+
+function Area:getTileIndexFromWorld(world_x, world_y)
+    return self:getTileIndex(Area.worldToTile(world_x, world_y))
+end
 
 
 -- A* Methods
@@ -221,7 +195,7 @@ function Area:getNode(location)
   -- Here you make sure the requested node is valid (i.e. on the map, not blocked)
   -- if the location is not valid, return nil, otherwise return a new Node object
   if self:floorAt(location.x, location.y) then
-    return Node(location, 1, location.y * self.data.height + location.x)
+    return Node(location, 1, self:getTileId(location.x, location.y))
   end
   return nil
 end
