@@ -203,7 +203,7 @@ function ChamberWindow:update(dt)
 
     if not self.choosing and not self.trigger_inc_sound then
         self.trigger_inc_sound = true
-        audio.play('use')
+        audio.play('chamber')
     end
 
     return true
