@@ -79,8 +79,8 @@ function Punch:init(conf)
     }, conf or {})
     Attack.init(self, conf)
 
-    self.x = self.x + self.velx * 2 + 2
-    self.y = self.y + self.vely * 2 + 2
+    self.x = self.x + self.velx * 2 + 4
+    self.y = self.y + self.vely * 2 + 3
 
     -- Play my sound
     audio.play 'punch'
@@ -99,7 +99,8 @@ function Punch:draw()
         love.graphics.translate(x - 16, y - 12)
         love.graphics.rotate(rot)
         love.graphics.scale(sx, sy)
-        -- love.graphics.rotate(vector.angle(self.velx, self.vely) - math.pi / 4)
+        love.graphics.rotate(vector.angle(self.velx, self.vely) + math.pi * 3 / 4)
+        love.graphics.translate(-self.w/2, -self.h/2)
         self.conf.sprite:draw(0, 0)
     love.graphics.pop()
 
