@@ -28,7 +28,7 @@ end
 config = {
 	debug = true,
 	start_area = 'start',
-	-- music = true,
+	music = true,
 
 
 	show_console = false,

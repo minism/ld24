@@ -161,6 +161,11 @@ function game.checkPlayerTileEvent(px, py)
         if x + entity.xofs == tx and y + entity.yofs == ty then
             if isinstance(entity, Subject) then
                 game.releaseSubject(entity)
+            elseif isinstance(entity, Blaster) then
+                game.showWindow("You found a blaster!  You can switch weapons at any time with " .. keys.weapon)
+                entity:die()
+                table.insert(game.player.state.weapons, Bullet)
+                game.player.state.weapon = Bullet
             end
         end
     end
@@ -227,9 +232,13 @@ function game.processSpecialTile(data)
             game.addEntity(game.area.chamber)
         end,
 
+        [56] = function()
+            game.addEntity(Blaster { x=x, y=y })
+        end,
+
 
         [49] = function()
-            game.addEntity( Light { x=x, y=y})
+            game.addEntity(Light { x=x, y=y})
         end,
 
     }
@@ -663,6 +672,12 @@ function game:keypressed(key, unicode)
         if key == 'f6' then
             game.loadArea('base')
         end
+    end
+
+
+    -- Game keys
+    if key == keys.weapon then
+        game.player:cycleWeapon()
     end
 end
 

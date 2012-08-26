@@ -35,7 +35,7 @@ function Bullet:init(conf)
         w = 4,
         h = 4,
         bound = 6,
-        speed = 80,
+        speed = 100,
         damage = 5,
     }, conf or {})
     Attack.init(self, conf)
@@ -54,7 +54,7 @@ function Bullet:update(dt)
     self:move(self.velx, self.vely, dt)
 
     -- Die on walls
-    if not game.area:floorAtWorld(self.x - self.velx * dt, self.y - self.vely * dt) then
+    if not game.area:bulletAtWorld(self.x - self.velx * dt, self.y - self.vely * dt) then
         self.dead = true
     end
 end

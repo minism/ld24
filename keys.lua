@@ -8,6 +8,8 @@ local keys = {
     a_left = "j",
     a_down = "k",
     a_right = "l",
+
+    weapon = "tab",
 }
 
 function keys.isDown(command)

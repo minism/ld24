@@ -113,3 +113,28 @@ function Light:init(conf)
     }, conf or {})
     TileEntity.init(self, conf)
 end
+
+
+
+Blaster = TileEntity:extend {
+    
+}
+
+function Blaster:init(conf)
+    local conf = extend({
+        xofs = -1,
+        yofs = 0,
+    }, conf or {})
+    TileEntity.init(self, conf)
+
+    self.sprite = Sprite {
+        speed = 0.1,
+        image = assets.gfx.blaster,
+        frame_h = 16,
+        frame_w = 16,
+    }
+end
+
+function Blaster:drawLocal()
+    self.sprite:draw(12, 12)
+end

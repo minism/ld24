@@ -104,6 +104,19 @@ function Area:floorAt(row, col)
     return self.tilelayers.floor.data[index] > 0
 end
 
+function Area:halfAt(row, col)
+    if row < 1 or col < 1 or row > self.data.width or col > self.data.height then
+        return false
+    end
+    local index = row + (col - 1) * self.tilelayers.floor.height
+    return self.tilelayers.half.data[index] > 0
+end
+
+function Area:bulletAtWorld(world_x, world_y)
+    local tx, ty = self.worldToTile(world_x, world_y)
+    return self:floorAt(tx, ty) or self:halfAt(tx, ty)
+end
+
 
 -- Get vectors to adjacent foor tiles
 function Area:getAdjacentTileVectors(x, y)
@@ -144,6 +157,7 @@ function Area:load()
     -- Cache floor and special layers
     self.tilelayers.floor = self:getLayer('floor')
     self.tilelayers.sp = self:getLayer('sp')
+    self.tilelayers.half = self:getLayer('half')
     assert(self.tilelayers.floor.width, "No floor layer")
 
     -- Process map SP layer

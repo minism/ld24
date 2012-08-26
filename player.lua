@@ -24,11 +24,24 @@ function Player:init(conf)
         modes = 8,
     }
 
-    self.state.weapon = Punch
+    self.state.weapons = {
+        Punch
+    }
+    self.state.weapon = self.state.weapons[1]
 
     -- Player time instance
     self.time = Time()
     self.attack_ready = true
+end
+
+function Player:cycleWeapon()
+    local index = 1
+    for i, weapon in ipairs(self.state.weapons) do
+        if weapon == self.state.weapon then
+            index = i
+        end
+    end
+    self.state.weapon = self.state.weapons[(index % #self.state.weapons) + 1]
 end
 
 -- Get a scaled stat
