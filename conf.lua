@@ -27,6 +27,7 @@ end
 -- Global game config
 config = {
 	debug = true,
+	start_area = 'test',
 
 
 	show_console = true,

@@ -5,8 +5,8 @@ local assets = {}
 function assets.load()
     assets.tilesets = leaf.fs.loadImages('tilesets', assets.loadCallback)
     assets.gfx = leaf.fs.loadImages('gfx', assets.loadCallback)
-    -- assets.sfx = leaf.fs.loadSounds('sfx', assets.loadCallback)
-    -- assets.music = leaf.fs.loadSounds('music', assets.loadCallback)
+    assets.sfx = leaf.fs.loadSounds('sfx', assets.loadCallback)
+    assets.music = leaf.fs.loadSounds('music', assets.loadCallback)
     assets.areas = leaf.fs.loadChunks('areas', assets.loadCallback)
     -- assets.shaders = leaf.fs.loadShaders('shaders', assets.loadCallback)
 

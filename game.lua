@@ -59,8 +59,14 @@ function game.setup()
     -- Screen overlay
     game.overlay = {0, 0, 0, 0}
 
-    -- Test
-    game.loadArea('start')
+    -- Start music
+    assets.music.music:setLooping(true)
+    assets.music.music:setVolume(0.7)
+    assets.music.music:play()
+
+
+    -- Load first area
+    game.loadArea(config.start_area)
 end
 
 
