@@ -255,6 +255,7 @@ function game.drawScene()
     local spritebatch = tilehelper.spritebatch.main
     spritebatch:clear()
     local floor = game.area:getLayer('floor')
+    love.graphics.setColor(255, 255, 255)
     for x=1, game.area.data.width do
         for y=1, game.area.data.height do
             local index = game.area:getTileIndex(x, y)
@@ -273,6 +274,7 @@ function game.drawScene()
             local index = game.area:getTileIndex(x, y)
 
             -- Process tiles
+            love.graphics.setColor(255, 255, 255)
             for i, layer in ipairs(game.area.data.layers) do
                 -- Dont draw special tiles or floor
                 if layer.name ~= 'sp' and layer.name ~= 'floor' and layer.type == 'tilelayer' then
