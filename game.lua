@@ -288,7 +288,7 @@ function game.drawScene()
             end
 
             -- Draw any entities in this index
-            for ei, entity in ipairs(game._render_index[index]) do
+            for ei, entity in ipairs(game._render_index[index] or {}) do
                 entity:draw()
             end
         end
