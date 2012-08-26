@@ -171,8 +171,8 @@ function game.checkPlayerPositionEvent(px, py)
     -- Check for door
     for i, door in ipairs(game.doors) do
         local a,b,c,d = door:getCollisionRect()
-        a = a - Door.range
-        b = b - Door.range
+        a = a - Door.range / 2
+        b = b - Door.range / 2
         c = c + Door.range
         d = d + Door.range
         local last = door.sprite.reverse
