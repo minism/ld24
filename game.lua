@@ -1,6 +1,7 @@
 require 'area'
 require 'player'
 require 'enemy'
+require 'item'
 
 local game = {}
 game.entities = {}

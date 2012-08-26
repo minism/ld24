@@ -14,7 +14,7 @@ function Player:init(conf)
         speed = 10,
         focus = 10,
         vision = 10,
-        vitality = 20,
+        vitality = 10,
     }
 
     self.sprite = MultiSprite {

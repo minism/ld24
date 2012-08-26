@@ -72,6 +72,9 @@ function Entity:draw()
 end
 
 function Entity:drawLocal()
+    if self.sprite then
+        self.sprite:draw()
+    end
 end
 
 -- Movement functions

@@ -1,3 +1,7 @@
+require 'entity'
+require 'item'
+
+
 Humanoid = Entity:extend()
 
 function Humanoid:init(conf)
@@ -161,11 +165,29 @@ end
 
 function Scientist:decide()
     local vec_px, vec_py, cost = game.area:findPathVector(self.x, self.y)
-    if cost < 5 then
+    if cost and cost < 5 then
         self.ai_state = 'move_away'
     else
         self.ai_state = 'move_random'
     end
+end
+
+function Scientist:die()
+    Enemy.die(self)
+    
+    -- Drop modules
+    -- local nmodules = math.random(1, 3)
+    -- for i=1, nmodules do
+    --     local theta = math.random() * math.pi * 2
+    --     local drop_velx, drop_vely = vector.rotate(1, 0, theta)
+    --     local mod = DNAModule {
+    --         x = self.x,
+    --         y = self.y,
+    --         velx = drop_velx,
+    --         vely = drop_vely,
+    --     }
+    --     game.addEntity(mod)
+    -- end
 end
 
 
