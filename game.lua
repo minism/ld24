@@ -53,7 +53,7 @@ function game.setup()
     local tx, ty = Area.tileToWorld(7, 14)
     game.state = {
         subjects = 25,
-        modules = 10,
+        modules = 0,
         save = {
             area = config.start_area,
             x = tx,
@@ -120,8 +120,8 @@ function game.releaseSubject(subject)
     if subject.state then
         game.state.subjects = game.state.subjects - 1
         subject.state = false
+        audio.play('thanks')
     end
-    audio.play('thanks')
 end
 
 
