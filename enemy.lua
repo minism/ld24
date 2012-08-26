@@ -130,6 +130,9 @@ end
 Guard = Enemy:extend()
 
 function Guard:init(conf)
+    local conf = extend({
+        speed = 30,
+    }, conf or {})
     Enemy.init(self, conf)
     self.sprite = MultiSprite {
         image = assets.gfx.guard,

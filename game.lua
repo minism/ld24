@@ -94,7 +94,7 @@ end
 
 function game.respawn()
     game.player.state.health = game.player:stat('vitality')
-    game.gotoArea(game.state.save.area)
+    game.gotoArea(game.state.save.area, game.state.save.x, game.state.save.y)
 end
 
 function game.toggleLights()
@@ -113,8 +113,10 @@ function game.releaseSubject(subject)
         game.flags.first_subject = false
         game.showWindow("Thank you so much for releasing me!  We have to find the others.")
     end
-    game.state.subjects = game.state.subjects - 1
-    subject.state = false
+    if subject.state then
+        game.state.subjects = game.state.subjects - 1
+        subject.state = false
+    end
     --play
 end
 

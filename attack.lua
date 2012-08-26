@@ -35,7 +35,7 @@ function Bullet:init(conf)
         w = 4,
         h = 4,
         bound = 6,
-        speed = 100,
+        speed = 120,
         damage = 5,
     }, conf or {})
     Attack.init(self, conf)
