@@ -39,6 +39,6 @@ config = {
 
 
 	max_stat = 35,
-	starting_stat = 35,
+	starting_stat = 10,
 
 }
