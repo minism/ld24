@@ -96,7 +96,7 @@ end
 function Punch:draw()
     local x, y, rot, sx, sy = iso.toOrtho(self.x, self.y)
     love.graphics.push()
-        love.graphics.translate(x - 16, y - 12)
+        love.graphics.translate(x - 16, y - 16)
         love.graphics.rotate(rot)
         love.graphics.scale(sx, sy)
         love.graphics.rotate(vector.angle(self.velx, self.vely) + math.pi * 3 / 4)

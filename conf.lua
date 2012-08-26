@@ -27,7 +27,7 @@ end
 -- Global game config
 config = {
 	debug = true,
-	start_area = 'start',
+	start_area = 'a1',
 	music = true,
 
 
