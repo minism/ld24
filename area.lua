@@ -195,7 +195,7 @@ function Area:getNode(location)
   -- Here you make sure the requested node is valid (i.e. on the map, not blocked)
   -- if the location is not valid, return nil, otherwise return a new Node object
   if self:floorAt(location.x, location.y) then
-    return Node(location, 1, self:getTileId(location.x, location.y))
+    return Node(location, 1, self:getTileIndex(location.x, location.y))
   end
   return nil
 end
