@@ -42,7 +42,7 @@
 
 return {
     play = function(name)
-        -- assets.sfx[name]:play()
+        assets.sfx[name]:play()
     end,
     
 }
