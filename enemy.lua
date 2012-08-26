@@ -83,6 +83,10 @@ function Enemy:getHit(attack_entity)
     end
 end
 
+function Enemy:decide()
+    self.vec_px, self.vec_py, self.cost = game.area:findPathVector(self.x, self.y)
+end
+
 function Enemy:update(dt)
     -- Update ai timer
     self.ai_timer = self.ai_timer - dt
@@ -92,16 +96,15 @@ function Enemy:update(dt)
     end
 
     -- Calculate node list to player using astar
-    local vec_px, vec_py, cost = game.area:findPathVector(self.x, self.y)
     if self.ai_state == 'move_random' then
         self:move(0, 0, dt)
-    elseif vec_px and vec_py then
+    elseif self.vec_px and self.vec_py then
         if self.ai_state == 'move_player' then
             -- Move towards player
-            self:move(vec_px, vec_py, dt)
+            self:move(self.vec_px, self.vec_py, dt)
         elseif self.ai_state == 'move_away' then
             -- Move away from player
-            self:tryMove(-vec_px, -vec_py, dt)
+            self:tryMove(-self.vec_px, -self.vec_py, dt)
         end
     else
         self:move(0, 0, dt)
@@ -121,15 +124,15 @@ function Guard:init(conf)
 end
 
 function Guard:decide()
-    local vec_px, vec_py, cost = game.area:findPathVector(self.x, self.y)
-    if cost < 10 then
+    Enemy.decide(self)
+    if self.cost < 10 then
         self.ai_state = 'move_player'
     end
 
     local fire_range = math.random(4, 7)
-    if cost <= fire_range then
+    if self.cost <= fire_range then
         self.ai_state = 'fire'
-        self:updateSpriteMode(vec_px, vec_py)
+        self:updateSpriteMode(self.vec_px, self.vec_py)
         -- Calculate vector to player, offset  by random amount
         local miss_amount = 0.5
         local offset = math.random() * miss_amount - miss_amount / 2 - 0.1
@@ -160,8 +163,8 @@ function Scientist:init(conf)
 end
 
 function Scientist:decide()
-    local vec_px, vec_py, cost = game.area:findPathVector(self.x, self.y)
-    if cost and cost < 5 then
+    Enemy.decide(self)
+    if self.cost and self.cost < 5 then
         self.ai_state = 'move_away'
     else
         self.ai_state = 'move_random'
