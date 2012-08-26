@@ -6,7 +6,6 @@ Window = Context:extend()
 local MIN_TIME = 1
 local ANIMATE_TIME = 0.1
 
-local margin = 100
 local padding = 50
 
 function Window:init(message, callback)
@@ -14,6 +13,7 @@ function Window:init(message, callback)
     self.timer = 0
     self.closable = true
     self.callback = callback
+    self.margin = 200
 end
 
 function Window:update(dt)
@@ -27,10 +27,10 @@ function Window:draw()
     love.graphics.setLineWidth(2)
     local sw, sh = love.graphics.getWidth(), love.graphics.getHeight()
     local anim_alpha = math.min(self.timer / ANIMATE_TIME, 1)
-    local x = margin
-    local y = sh / 2 * (1 - anim_alpha) + margin
-    local w = sw - margin * 2
-    local h = anim_alpha * (sh - margin * 2)
+    local x = self.margin
+    local y = sh / 2 * (1 - anim_alpha) + self.margin
+    local w = sw - self.margin * 2
+    local h = anim_alpha * (sh - self.margin * 2)
     ui.drawBox(x, y, w, h, color.win_bg, color.white)
 
 
@@ -41,8 +41,8 @@ function Window:draw()
 
     if self.closable and self.timer > MIN_TIME and math.floor(self.timer*4) % 2 == 0 then
         -- Draw indicator that we can proceed
-        love.graphics.draw(assets.gfx.indicator, sw - margin - padding,
-                           sh - margin - padding, 0, 3, 3)
+        love.graphics.draw(assets.gfx.indicator, sw - self.margin - padding,
+                           sh - self.margin - padding, 0, 3, 3)
     end
 end
 
@@ -50,8 +50,8 @@ function Window:drawContent()
     local sw, sh = love.graphics.getWidth(), love.graphics.getHeight()
     love.graphics.setFont(assets.font.ui)
     color.win_font()
-    love.graphics.printf(self.message, margin + padding, margin + padding, 
-                         sw - margin * 2 - padding * 2)
+    love.graphics.printf(self.message, self.margin + padding, self.margin + padding, 
+                         sw - self.margin * 2 - padding * 2)
 end
 
 function Window:keypressed()
@@ -87,6 +87,7 @@ function ChamberWindow:init(callback)
     self.incubate_timer = 0
     self.max_slider = 3000
     self.slider = Slider()
+    self.margin = 100
 
     self.btn = {
         ok = Button("Incubate"),
@@ -129,12 +130,12 @@ function ChamberWindow:drawContent()
     love.graphics.setFont(assets.font.ui)
     color.win_font()
     -- Draw controls
-    local left, right = margin + padding, sw - margin - padding
-    local top = margin + padding, sh - margin - padding
+    local left, right = self.margin + padding, sw - self.margin - padding
+    local top = self.margin + padding, sh - self.margin - padding
 
     if self.choosing then
         -- Draw selection
-        love.graphics.printf("Do stuff", margin + padding, margin + padding, sw - margin * 2 - padding * 2)
+        love.graphics.printf("Do stuff", self.margin + padding, self.margin + padding, sw - self.margin * 2 - padding * 2)
         self.slider:draw(left, top + textarea, right - left)
         love.graphics.printf("You will incubate for " .. self.choice .. " nanoseconds", left, top + textarea * 3, right - left)
 

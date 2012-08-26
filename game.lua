@@ -73,6 +73,7 @@ function game.setup()
     end
 
     -- Start dialog
+    
 
 
     -- Load first area
