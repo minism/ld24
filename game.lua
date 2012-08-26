@@ -71,17 +71,20 @@ function game.setup()
     game.pending_load = nil
 
     -- Screen overlay
-    game.overlay = {0, 0, 0, 0}
-
-    -- Start music
-    if config.music then
-        assets.music.music:setLooping(true)
-        assets.music.music:setVolume(0.6)
-        assets.music.music:play()
-    end
+    game.overlay = {0, 0, 0, 255}
 
     -- Start dialog
 
+    game.showWindow("LOOKING AROUND YOU CAN SEE SEVERAL OTHER TEST SUBJECTS IN THE ROOM.  \n\nYOU BEGIN TO FILL WITH RAGE.", function()
+        -- Start music
+        if config.music then
+            assets.music.music:setLooping(true)
+            assets.music.music:setVolume(0.6)
+            assets.music.music:play()
+        end
+    end)
+
+    game.showWindow "YOU AWAKE IN THE SHATTERED REMAINS OF A HOLDING CELL.  \n\nFOR SOME TIME NOW YOU HAVE BEEN HELD CAPTIVE HERE AT HumanTECH AGAINST YOUR WILL.  \n\nYOUR BODY HAS BEEN PROVIDING A RESEARCH SUBJECT FOR GENETIC MUTATION DESIGN."
 
 
     -- Load first area
@@ -97,7 +100,7 @@ function game.checkMajorState()
 
     -- Player won?
     if game.state.subjects <= 0 then
-        game.showWindow("Congratulations.  You freed all of the survivors!  Your time was ", function()
+        game.showWindow("CONGRATULATIONS, YOU FREED ALL THE SURVIVORS! ", function()
             love.event.quit()
         end)
     end
@@ -112,7 +115,7 @@ function game.toggleLights()
     -- Show on first usage in game
     if game.flags.first_lights then
         game.flags.first_lights = false
-        game.showWindow("Light switches like these can be used to turn on and off all of the lights in a room")
+        game.showWindow("IF FUNCTIONAL, THESE CONSOLES CAN BE USED TO CONTROL THE LIGHT OF A ROOM")
     end
     game.area.flags.lights = not game.area.flags.lights 
     audio.play('lights')
@@ -122,7 +125,7 @@ function game.releaseSubject(subject)
     -- Show on first usage in game
     if game.flags.first_subject then
         game.flags.first_subject = false
-        game.showWindow("Thank you so much for releasing me!  We have to find the others.")
+        game.showWindow("SUBJECT:  Ahh... Thank you!  I have been floating in this damn container for years.  \n\nBy my last count there were 25 of us subjects in total.  We should explore this hellish complex in search of our brothers.")
     end
     if subject.state then
         game.state.subjects = game.state.subjects - 1
@@ -176,7 +179,7 @@ function game.checkPlayerTileEvent(px, py)
             if isinstance(entity, Subject) then
                 game.releaseSubject(entity)
             elseif isinstance(entity, Blaster) then
-                game.showWindow("You found a blaster!  You can switch weapons at any time with " .. keys.weapon)
+                game.showWindow("YOU FOUND A BLASTER!  YOU CAN SWITCH WEAPONS AT ANY TIME WITH [TAB]")
                 entity:die()
                 table.insert(game.player.state.weapons, Bullet)
                 game.player.state.weapon = Bullet
@@ -412,7 +415,7 @@ function game.useChamber()
             app:pushContext(chamber_win)
         else
             -- TODO: Error sound
-            game.showWindow("You need 10 DNA modules to be able to use this incubation chamber.")
+            game.showWindow("ERROR: THIS INCUBATION CHAMBER REQUIRES 10 DNA MODULES TO USE")
         end
     end
 

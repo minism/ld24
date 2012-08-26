@@ -6,7 +6,7 @@ Window = Context:extend()
 local MIN_TIME = 1
 local ANIMATE_TIME = 0.1
 
-local padding = 50
+local padding = 25
 
 function Window:init(message, callback)
     self.message = message or ""
@@ -48,7 +48,7 @@ end
 
 function Window:drawContent()
     local sw, sh = love.graphics.getWidth(), love.graphics.getHeight()
-    love.graphics.setFont(assets.font.ui)
+    love.graphics.setFont(assets.font.window)
     color.win_font()
     love.graphics.printf(self.message, self.margin + padding, self.margin + padding, 
                          sw - self.margin * 2 - padding * 2)
@@ -134,7 +134,7 @@ function ChamberWindow:drawContent()
 
     -- Draw heading
     local textarea = 90
-    love.graphics.setFont(assets.font.ui)
+    love.graphics.setFont(assets.font.window)
     color.win_font()
     -- Draw controls
     local left, right = self.margin + padding, sw - self.margin - padding

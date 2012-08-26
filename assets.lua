@@ -21,6 +21,7 @@ function assets.load()
 
     assets.font = {
         ui = love.graphics.newFont('font/font.ttf', 18),
+        window = love.graphics.newFont('font/font.ttf', 24),
         large = love.graphics.newFont('font/font.ttf', 48),
         huge = love.graphics.newFont('font/font.ttf', 72),
     }

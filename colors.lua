@@ -7,10 +7,10 @@ return ColorPalette {
     enemy_attack = {255, 0, 0},
 
     -- ui colors
-    ui_bg = {36, 21, 51},
-    ui_border = {26, 15, 40},
+    ui_bg = {50, 50, 60},
+    ui_border = {40, 40, 50},
     ui_font = {250, 250, 250},
-    ui_font2 = {20, 200, 250},
+    ui_font2 = {250, 180, 0},
     ui_bar = {255, 0, 0},
 
 
