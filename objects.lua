@@ -40,3 +40,31 @@ function Door:init(conf)
     self.sprite.reverse = true
 end
 
+
+Chamber = TileEntity:extend {
+    
+}
+
+function Chamber:init(conf)
+    local conf = extend({
+
+    }, conf or {})
+    TileEntity.init(self, conf)
+
+    self.sprite = Sprite {
+        speed = 0,
+        image = assets.gfx.chamber,
+        frame_h = 32,
+        frame_w = 32,
+    }
+
+    self.used = self.conf.used
+end
+
+function Chamber:update(dt)
+    if self.used then
+        self.sprite.frame = 2
+    else
+        self.sprite.frame = 1
+    end
+end

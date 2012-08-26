@@ -72,12 +72,22 @@ end
 
 -- Player entered a tile, do anything necessary
 function game.checkPlayerTileEvent(px, py)
+    local tx, ty = Area.worldToTile(px, py)
+
     -- Check for area logic tiles
     local tile = game.area:logicTileAtWorld(px, py)
     if tile then
         if tile.type == "connection" then 
             game.gotoArea(tile.area)
         elseif tile.type == "chamber" then
+            game.useChamber()
+        end
+    end
+
+    -- Check for chamber
+    if game.area.chamber then
+        local x, y = Area.worldToTile(game.area.chamber.x, game.area.chamber.y)
+        if x - 1 == tx and y == ty then
             game.useChamber()
         end
     end
@@ -128,6 +138,10 @@ function game.processSpecialTile(data)
             table.insert(game.doors, door)
         end,
 
+        [57] = function()
+            game.area.chamber = Chamber {x = x, y = y, used = game.area.flags.used_chamber}
+            game.addEntity(game.area.chamber)
+        end
     }
     if handlers[id] then handlers[id]() end
 end
@@ -218,6 +232,7 @@ function game.useChamber()
         -- Show chamber window
         local chamber_win = ChamberWindow(function(success)
             if success == true then
+                game.area.chamber.used = true
                 game.area.flags.used_chamber = true
             end
         end)

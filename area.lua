@@ -26,6 +26,9 @@ function Area:init(areaname)
     -- Logical tiles
     self.logic_tiles = {}
 
+    -- Special objects
+    self.chamber = nil
+
     -- For sp init data
     self.sp_init = {}
 
@@ -117,16 +120,16 @@ function Area:load()
                 })
 
                 -- Add some sp tiles as logic tiles instead
-                local logic_tile = nil
-                if tile_id == 57 then
-                    logic_tile = LogicTile {
-                        x = x,
-                        y = y,
-                        type = 'chamber',
-                    }
-                end
+                -- local logic_tile = nil
+                -- if tile_id == 57 then
+                --     logic_tile = LogicTile {
+                --         x = x,
+                --         y = y,
+                --         type = 'chamber',
+                --     }
+                -- end
 
-                if logic_tile then table.insert(self.logic_tiles, logic_tile) end
+                -- if logic_tile then table.insert(self.logic_tiles, logic_tile) end
             end
         end
     end

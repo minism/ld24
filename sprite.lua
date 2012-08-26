@@ -8,7 +8,9 @@ function Sprite:init(prop)
     self.image = prop.image
     self.quads = build_quads(self.image, prop.frame_w, prop.frame_h)
     self.frame = 1
-    self.timer = time:every(self.speed, function() self:advanceFrame() end)
+    if self.speed > 0 then
+        self.timer = time:every(self.speed, function() self:advanceFrame() end)
+    end
     self.loops = 0
 end
 
