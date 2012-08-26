@@ -3,6 +3,7 @@ require 'player'
 require 'enemy'
 require 'item'
 require 'window'
+require 'objects'
 
 local game = {}
 
@@ -65,8 +66,31 @@ function game.processSpecialTile(data)
         [61] = function()
             game.addEntity(Scientist { x=x, y=y })
         end,
+
+        [58] = function()
+            game.addEntity(Door {x=x, y=y})
+        end,
+
+        [59] = function()
+            -- game.addEntity(Door {x=x, y=y, left=false})
+        end,
+
     }
     if handlers[id] then handlers[id]() end
+end
+
+
+function game.destroyEntities()
+    if game.entities then
+        for i, entity in ipairs(game.entities) do
+            entitiy:destroy()
+        end
+    end
+    if game._entity_queue then
+        for i, entity in ipairs(game._entity_queue) do
+            entitiy:destroy()
+        end
+    end
 end
 
 
@@ -75,6 +99,8 @@ function game.loadArea(areaname)
     if game.area and game.area.name then
         lastarea_name = game.area.name
     end
+
+    game.destroyEntities()
 
     -- Dump previous data
     game.entities = {}

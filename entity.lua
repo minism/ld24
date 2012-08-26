@@ -32,6 +32,14 @@ function Entity:update(dt) end
 function Entity:updateSpriteMode(velx, vely) end
 function Entity:getHit(e) end
 
+function Entity:destroy()
+    -- Destroy sprite
+    if self.sprite then
+        self.sprite:destroy()
+    end
+end
+
+
 function Entity:getCenter()
     return self.x - self.w / 2, self.y - self.h /2 + 2
 end

@@ -116,15 +116,17 @@ function Area:load()
                     y = wy + WORLD_TILESIZE / 2,
                 })
 
-                -- HACK: add chamber as a logic tile
+                -- Add some sp tiles as logic tiles instead
+                local logic_tile = nil
                 if tile_id == 57 then
-                    local tile = LogicTile {
+                    logic_tile = LogicTile {
                         x = x,
                         y = y,
                         type = 'chamber',
                     }
-                    table.insert(self.logic_tiles, tile)
                 end
+
+                if logic_tile then table.insert(self.logic_tiles, logic_tile) end
             end
         end
     end
