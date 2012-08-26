@@ -60,9 +60,11 @@ function game.setup()
     game.overlay = {0, 0, 0, 0}
 
     -- Start music
-    assets.music.music:setLooping(true)
-    assets.music.music:setVolume(0.7)
-    assets.music.music:play()
+    if config.music then
+        assets.music.music:setLooping(true)
+        assets.music.music:setVolume(0.7)
+        assets.music.music:play()
+    end
 
 
     -- Load first area

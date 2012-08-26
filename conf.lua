@@ -28,6 +28,7 @@ end
 config = {
 	debug = true,
 	start_area = 'test',
+	music = true,
 
 
 	show_console = true,

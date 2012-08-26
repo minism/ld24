@@ -36,6 +36,10 @@ function Bullet:init(conf)
         damage = 5,
     }, conf or {})
     Attack.init(self, conf)
+
+
+    -- Play my sound
+    audio.play 'gun'
 end
 
 function Bullet:update(dt)

@@ -31,7 +31,7 @@ local fs = {}
 -- `file_callback` on each file and storing it in a map, and also calling
 -- `interp_callback` with a percentage of completion arg, for easy hooking.
 -- Finally, the function returns the constructed map
-function recursiveYieldingLoader(root, file_callback, interp_callback)
+function fs.recursiveYieldingLoader(root, file_callback, interp_callback)
     local map = {}
     local count, total = 0, 0
     function iter(path, docount)
@@ -66,17 +66,17 @@ end
 
 -- Load directory tree into a map of lua chunks
 function fs.loadChunks(path, callback)
-    return recursiveYieldingLoader(path, love.filesystem.load, callback)
+    return fs.recursiveYieldingLoader(path, love.filesystem.load, callback)
 end
 
 -- Load directory tree into a map of love.graphics.Image
 function fs.loadImages(path, callback)
-    return recursiveYieldingLoader(path, love.graphics.newImage, callback)
+    return fs.recursiveYieldingLoader(path, love.graphics.newImage, callback)
 end
 
 -- Load directory tree into a map of love.audio.Source
 function fs.loadSounds(path, callback)
-    return recursiveYieldingLoader(path, love.audio.newSource, callback)
+    return fs.recursiveYieldingLoader(path, love.audio.newSource, callback)
 end
 
 -- Load directory tree into a map of love.graphics.PixelEffect
@@ -90,7 +90,7 @@ function fs.loadShaders(path, callback)
         tmp = tmp:gsub('texture2D', 'Texel')
         return love.graphics.newPixelEffect(tmp)
     end
-    return recursiveYieldingLoader(path, subshader, callback)
+    return fs.recursiveYieldingLoader(path, subshader, callback)
 end
 
 

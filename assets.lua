@@ -5,10 +5,14 @@ local assets = {}
 function assets.load()
     assets.tilesets = leaf.fs.loadImages('tilesets', assets.loadCallback)
     assets.gfx = leaf.fs.loadImages('gfx', assets.loadCallback)
-    assets.sfx = leaf.fs.loadSounds('sfx', assets.loadCallback)
-    assets.music = leaf.fs.loadSounds('music', assets.loadCallback)
     assets.areas = leaf.fs.loadChunks('areas', assets.loadCallback)
-    -- assets.shaders = leaf.fs.loadShaders('shaders', assets.loadCallback)
+
+    -- Load sfx
+    audio.load()
+
+    assets.music = {
+        music = love.audio.newSource('music/music.mp3', 'streaming')
+    }
 
     -- Dont filter images
     for k, img in pairs(assets.tilesets) do

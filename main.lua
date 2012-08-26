@@ -54,6 +54,7 @@ function love.load()
     keys = require 'keys'
     game = require 'game'
     ui = require 'ui'
+    audio = require 'audio'
 
     -- Global timer that always runs
     time = Time()
