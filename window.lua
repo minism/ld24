@@ -107,13 +107,20 @@ function ChamberWindow:init(callback)
 end
 
 function ChamberWindow:mutateStats()
-    local max_mutation = 7
+    local max_mutation = 8
     local min_delta = 1
-    local optimism = 0.25
-    local delta = math.max(self.slider.value * max_mutation, min_delta)
+    local baseline = 0.5
+    local optimism = 0.3
+    local alpha = baseline + (1.0 - baseline) * self.slider.value
+    local delta = math.max(alpha * max_mutation, min_delta)
     for i, stats in ipairs(self.mutated_stats) do
         for name, value in pairs(stats) do
-            stats[name] = math.ceil(value + delta * (math.random() * 2 - 1.0 + optimism))
+            stats[name] = math.ceil(value + delta * (math.min(math.random() * 2 - 1.0 + optimism, 1.0)))
+            if stats[name] < 1 then
+                stats[name] = 1
+            elseif stats[name] > config.max_stat then
+                stats[name] = config.max_stat
+            end
         end
     end
 end
@@ -186,7 +193,7 @@ function ChamberWindow:update(dt)
     end
 
     -- Update internal value
-    self.choice = math.floor(self.slider.value * self.max_slider)
+    self.choice = math.floor((1/5) * self.max_slider + 4/5 * self.slider.value * self.max_slider)
 
     return true
 end

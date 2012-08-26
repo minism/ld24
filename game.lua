@@ -51,7 +51,7 @@ function game.setup()
     -- Game state
     game.state = {
         subjects = 25,
-        modules = 0,
+        modules = 10,
         save = {
             area = config.start_area,
         }
@@ -370,7 +370,7 @@ function game.useChamber()
     if not game.area.flags.used_chamber then
 
         -- Check if enough modules
-        if game.state.modules > CHAMBER_MODULES then
+        if game.state.modules >= CHAMBER_MODULES then
             game.state.modules = game.state.modules - CHAMBER_MODULES
 
             -- PLay sound
@@ -398,7 +398,7 @@ function game.useChamber()
             game.showWindow("You need 10 DNA modules to be able to use this incubation chamber.")
         end
 
-    end
+    -- end
 
 
     -- Show on first usage in game

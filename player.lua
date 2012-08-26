@@ -11,10 +11,10 @@ function Player:init(conf)
     Humanoid.init(self, conf)
 
     self.stats = {
-        speed = 10,
-        focus = 10,
-        vision = 10,
-        vitality = 10,
+        speed = config.starting_stat,
+        focus = config.starting_stat,
+        vision = config.starting_stat,
+        vitality = config.starting_stat,
     }
 
     self.sprite = MultiSprite {
@@ -47,7 +47,7 @@ end
 -- Get a scaled stat
 local stat_scales = {
     speed = 4,
-    vision = 10,
+    vision = 11,
     vitality = 3,
     focus = 1 / 6,
 }
