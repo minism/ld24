@@ -1,4 +1,4 @@
-out=ld24.love
+out=humantech.love
 url=http://minornine.com/games/files/$(out)
 
 all:

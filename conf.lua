@@ -1,6 +1,6 @@
 function love.conf(t)
 	-- Love settings
-	t.title = "ld24"
+	t.title = "HumanTECH"
     t.version = "0.8.0"
 	t.author = "joshbothun@gmail.com"
 	t.identity = nil
